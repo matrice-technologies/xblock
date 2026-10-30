@@ -1,5 +1,5 @@
-// Zips dist/ into release/xblock-<version>.zip for the Chrome Web Store.
-// Run through `npm run package`, which makes a release build first.
+// Zips chrome_extension/dist/ into chrome_extension/release/xblock-<version>.zip for the
+// Chrome Web Store. Run through `npm run package`, which makes a release build first.
 const fs = require('fs');
 const path = require('path');
 const AdmZip = require('adm-zip');

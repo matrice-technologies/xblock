@@ -1,4 +1,4 @@
-// Samurai block mode, ported from the extension (src/content/samurai.js).
+// Samurai block mode, ported from the extension (chrome_extension/src/content/samurai.js).
 // The post lifts out of the feed onto a dark stage, where the visitor slices it
 // apart just by sweeping the pointer (or a finger) through it. Every piece is a
 // clone of the post clipped to a convex polygon, so the cuts go through the

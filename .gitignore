@@ -1,7 +1,7 @@
 node_modules
+# Build output, wherever it lands (chrome_extension/dist, chrome_extension/release)
 dist/
 release/
-dist.zip
 
 # Secrets and private notes: never commit these
 .env

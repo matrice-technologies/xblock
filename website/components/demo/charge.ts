@@ -1,5 +1,5 @@
 // The long press before an explosion, ported from the extension
-// (src/content/content.js, the block button's mousedown): the post trembles
+// (chrome_extension/src/content/content.js, the block button's mousedown): the post trembles
 // more and more, a red frame thickens around it and cracks run in from its
 // edges. Let go early and nothing happens; hold to the end and it blows.
 

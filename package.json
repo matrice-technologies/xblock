@@ -3,20 +3,11 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "build": "webpack --watch --config webpack.development.js",
-    "release": "webpack --config webpack.production.js",
+    "setup": "npm --prefix chrome_extension install && npm --prefix server install && npm --prefix server run db:deploy && npm --prefix website install",
+    "build": "npm --prefix chrome_extension run build",
+    "package": "npm --prefix chrome_extension run package",
     "server": "npm --prefix server run dev",
     "server:setup": "npm --prefix server install && npm --prefix server run db:deploy",
-    "package": "npm run release && node scripts/package-extension.js"
-  },
-  "devDependencies": {
-    "adm-zip": "^0.5.18",
-    "clean-webpack-plugin": "^4.0.0",
-    "copy-webpack-plugin": "^10.2.4",
-    "html-webpack-plugin": "^5.6.3",
-    "terser-webpack-plugin": "^5.3.14",
-    "webpack": "^5.98.0",
-    "webpack-cli": "^4.10.0",
-    "webpack-merge": "^5.10.0"
+    "website": "npm --prefix website run dev"
   }
 }

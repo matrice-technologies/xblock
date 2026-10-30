@@ -296,7 +296,7 @@
 }
 
 /* Samurai stage (components/demo/samurai.ts), from the extension's
-   src/css/samurai.css. */
+   chrome_extension/src/css/samurai.css. */
 .xbs-overlay {
   position: fixed;
   inset: 0;

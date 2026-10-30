@@ -10,7 +10,7 @@ Chrome extension  --HTTPS-->  your domain  -->  reverse proxy (TLS)
                                                    └─ SQLite on a persistent volume
 ```
 
-- **Extension:** `src/`, built with webpack into `dist/`.
+- **Extension:** `chrome_extension/`. Webpack builds `chrome_extension/src/` into `chrome_extension/dist/`.
 - **API server:** `server/`, Node + Express + Prisma + SQLite, built from `server/Dockerfile`.
 
 Any Docker host works (Coolify, Dokku, plain `docker run` behind Caddy or Traefik, ...).
@@ -51,8 +51,8 @@ docker run --rm -v <volume name>:/data -v "$PWD":/backup alpine \
 
 ## Releasing the extension
 
-1. Bump `version` in `src/manifest.json` (it must be higher than the published one).
-2. Run `npm run package`. It writes `release/xblock-<version>.zip`.
+1. Bump `version` in `chrome_extension/src/manifest.json` (it must be higher than the published one).
+2. Run `npm run package`. It writes `chrome_extension/release/xblock-<version>.zip`.
    - The build talks to the official server by default. To use your own: `XBLOCK_API_URL=https://your-domain npm run package`.
    - Release builds refuse plain `http://` URLs.
 3. Upload the zip in the Chrome Web Store developer dashboard.
@@ -68,4 +68,4 @@ See `README.md`. In short:
 
 - Start the local server: `npm run server:setup` (first time only), then `npm run server`.
 - Build the extension: `npm run build`. It uses `http://localhost:3000` by default.
-- Load `dist/` unpacked in `chrome://extensions`.
+- Load `chrome_extension/dist/` unpacked in `chrome://extensions`.

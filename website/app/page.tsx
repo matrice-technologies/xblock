@@ -409,7 +409,7 @@ export default function Page() {
                       {"\n"}  xblock-server
                       {"\n\n"}
                       <span className="text-muted-foreground"># the extension, built against it</span>
-                      {"\n"}cd xblock && npm install
+                      {"\n"}cd xblock/chrome_extension && npm install
                       {"\n"}XBLOCK_API_URL=<span className="text-brand">https://your-domain</span> npm run package
                     </code>
                   </pre>

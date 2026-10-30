@@ -1,0 +1,20 @@
+{
+  "name": "xblock-extension",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack --watch --config webpack.development.js",
+    "release": "webpack --config webpack.production.js",
+    "package": "npm run release && node scripts/package-extension.js"
+  },
+  "devDependencies": {
+    "adm-zip": "^0.5.18",
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^10.2.4",
+    "html-webpack-plugin": "^5.6.3",
+    "terser-webpack-plugin": "^5.3.14",
+    "webpack": "^5.98.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-merge": "^5.10.0"
+  }
+}

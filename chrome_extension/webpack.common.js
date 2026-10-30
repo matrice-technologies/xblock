@@ -58,7 +58,7 @@ module.exports = {
     }),
   ],
   output: {
-    // chrome load uppacked extension looks for files under dist/* folder
+    // Load chrome_extension/dist/ unpacked in chrome://extensions
     filename: '[name].js',
     path: path.resolve(__dirname, 'dist')
   },

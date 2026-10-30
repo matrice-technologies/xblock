@@ -2,10 +2,10 @@
 //   npm i --no-save puppeteer-core && node media/walkthrough/capture.js [scene ...]
 //
 // Records the real XBlock UI for the walkthrough video, one clip per scene:
-// - "x-*" scenes load the real content scripts (src/content) on a fake x.com timeline, with the
+// - "x-*" scenes load the real content scripts (chrome_extension/src/content) on a fake x.com timeline, with the
 //   chrome.* API mocked, so the in-page UI (block buttons, animations, list modes, batch overlay)
 //   is the actual extension code;
-// - "popup-*" scenes drive the built extension's popup (dist/) against the local server.
+// - "popup-*" scenes drive the built extension's popup (chrome_extension/dist/) against the local server.
 // Each clip is a folder of screencast frames + clip.json (frame times, mouse track, marks), which
 // compose.html turns into the video. The mouse is logged because screenshots don't show it.
 const fs = require("fs");
@@ -13,8 +13,8 @@ const path = require("path");
 const puppeteer = require("puppeteer-core");
 
 const ROOT = path.resolve(__dirname, "../..");
-const SRC = path.join(ROOT, "src");
-const DIST = path.join(ROOT, "dist");
+const SRC = path.join(ROOT, "chrome_extension", "src");
+const DIST = path.join(ROOT, "chrome_extension", "dist");
 const OUT = process.env.CLIPS_DIR || path.join(__dirname, "clips");
 const CHROME = process.env.CHROME_PATH || "C:/Program Files/Google/Chrome/Application/chrome.exe";
 const messages = JSON.parse(fs.readFileSync(path.join(SRC, "_locales/en/messages.json"), "utf8"));

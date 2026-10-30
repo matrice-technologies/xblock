@@ -1,4 +1,4 @@
-// The block explosion, ported from the extension (src/content/content.js): a
+// The block explosion, ported from the extension (chrome_extension/src/content/content.js): a
 // full-page canvas running a small particle simulation only while something is
 // on screen. Flash, shockwave, shards of the post, sparks, embers and smoke.
 

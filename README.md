@@ -26,13 +26,13 @@ XBlock stores its data in a local SQLite database managed by [Prisma](https://ww
    npm run server:setup                 # installs deps and creates the database
    ```
 2. Start the server: `npm run server`
-3. Build the extension: `npm run build`, then load `dist/` as an unpacked extension.
+3. Build the extension: `npm run build`, then load `chrome_extension/dist/` as an unpacked extension.
 
 Schema changes go in `server/prisma/schema.prisma`; run `npm --prefix server run db:migrate` to create a migration, and `npm --prefix server run db:studio` to browse the data.
 
 To test subscriptions or batch blocking locally, create a list owned by someone else with `npm --prefix server run seed:list -- handle1 handle2 ...` and subscribe to the printed share code.
 
-Translations live in `src/_locales/<lang>/messages.json` (English is the default, French is included); Chrome picks the language from the browser settings. In code, use `i18n("key", ...)`; in `popup.html`, tag elements with `data-i18n`, `data-i18n-placeholder` or `data-i18n-tooltip`. To add a language, copy `en/messages.json` to a new folder and translate the `message` values.
+Translations live in `chrome_extension/src/_locales/<lang>/messages.json` (English is the default, French is included); Chrome picks the language from the browser settings. In code, use `i18n("key", ...)`; in `popup.html`, tag elements with `data-i18n`, `data-i18n-placeholder` or `data-i18n-tooltip`. To add a language, copy `en/messages.json` to a new folder and translate the `message` values.
 
 Hosting your own server and releasing the extension are documented in [DEPLOY.md](DEPLOY.md).
 
