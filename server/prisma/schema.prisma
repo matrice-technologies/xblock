@@ -39,7 +39,7 @@ model Banlist {
 model BannedUser {
   banlistId String
   username  String
-  // Optional context shown when browsing a list (set by curated lists, see scripts/sync-faf-list.js)
+  // Optional context shown when browsing a list (set by curated lists, through /admin)
   name      String?
   note      String?
   createdAt DateTime @default(now())

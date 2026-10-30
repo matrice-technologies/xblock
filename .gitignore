@@ -9,6 +9,3 @@ dist.zip
 !.env.example
 *.private.md
 todo
-
-# Maintainer-only scripts kept out of the public repo
-scripts/sync-faf-list.js
