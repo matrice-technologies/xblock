@@ -1,15 +1,16 @@
-// Zips chrome_extension/dist/ into chrome_extension/release/xblock-<version>.zip for the
-// Chrome Web Store. Run through `npm run package`, which makes a release build first.
+// Zips the release build (chrome_extension/release/build/) into
+// chrome_extension/release/xblock-<version>.zip for the Chrome Web Store.
+// Run through `npm run package`, which makes the release build first.
 const fs = require('fs');
 const path = require('path');
 const AdmZip = require('adm-zip');
 
 const root = path.resolve(__dirname, '..');
-const dist = path.join(root, 'dist');
+const dist = path.join(root, 'release', 'build');
 const manifestPath = path.join(dist, 'manifest.json');
 
 if (!fs.existsSync(manifestPath)) {
-  console.error('dist/manifest.json not found, run the release build first');
+  console.error('release/build/manifest.json not found, run the release build first');
   process.exit(1);
 }
 

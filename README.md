@@ -26,7 +26,7 @@ XBlock stores its data in a local SQLite database managed by [Prisma](https://ww
    npm run server:setup                 # installs deps and creates the database
    ```
 2. Start the server: `npm run server`
-3. Build the extension: `npm run build`, then load `chrome_extension/dist/` as an unpacked extension.
+3. Build the extension: `npm run build`, then load `chrome_extension/dist/` as an unpacked extension. `dist/` always talks to your local server; store builds come from `npm run package`.
 
 Schema changes go in `server/prisma/schema.prisma`; run `npm --prefix server run db:migrate` to create a migration, and `npm --prefix server run db:studio` to browse the data.
 

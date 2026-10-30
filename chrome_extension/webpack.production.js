@@ -1,6 +1,8 @@
+const path = require('path');
 const { merge } = require('webpack-merge');
 
-// Release builds talk to the deployed server unless told otherwise
+// Release builds talk to the deployed server unless told otherwise. They build into
+// release/build/, never dist/, so the unpacked dev build stays local-only.
 process.env.XBLOCK_API_URL = process.env.XBLOCK_API_URL || 'https://xblock.nactio.com';
 
 // Never ship a release that talks to the server over plain HTTP
@@ -14,6 +16,9 @@ const TerserPlugin = require('terser-webpack-plugin');
 // Minified but not obfuscated: the Chrome Web Store rejects obfuscated code
 module.exports = merge(common, {
   mode: 'production',
+  output: {
+    path: path.resolve(__dirname, 'release', 'build'),
+  },
   optimization: {
     minimize: true,
     minimizer: [new TerserPlugin({
