@@ -78,7 +78,20 @@ export type SamuraiOptions = {
   onCancel?: () => void
   /** Each cut, with the running count. */
   onCut?: (cuts: number) => void
+  /** The stage's labels, in the page's language ({n} is the cut count). */
+  labels?: { hintMouse: string; hintFinger: string; cancelKey: string; cancelTap: string; cuts: string }
 }
+
+const ENGLISH = {
+  hintMouse: "Slice the post with your mouse",
+  hintFinger: "Slice the post with your finger",
+  cancelKey: "Esc to cancel",
+  cancelTap: "Tap to cancel",
+  cuts: "Cuts: {n}",
+}
+
+const escapeHtml = (text: string) =>
+  text.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!)
 
 let current: Session | null = null
 
@@ -202,6 +215,7 @@ export function startSamurai(post: HTMLElement, options: SamuraiOptions) {
   const style = getComputedStyle(post)
   const width = rect.width, height = rect.height
   const touch = window.matchMedia("(pointer: coarse)").matches
+  const labels = options.labels ?? ENGLISH
 
   const overlay = document.createElement("div")
   overlay.className = "xbs-overlay"
@@ -210,9 +224,9 @@ export function startSamurai(post: HTMLElement, options: SamuraiOptions) {
     <div class="xbs-kanji">斬</div>
     <div class="xbs-stage"></div>
     <canvas class="xbs-canvas"></canvas>
-    <button type="button" class="xbs-esc">${touch ? "Tap to cancel" : "Esc to cancel"}</button>
+    <button type="button" class="xbs-esc">${escapeHtml(touch ? labels.cancelTap : labels.cancelKey)}</button>
     <div class="xbs-hud">
-      <span class="xbs-hint">⚔ Slice the post with your ${touch ? "finger" : "mouse"}</span>
+      <span class="xbs-hint">⚔ ${escapeHtml(touch ? labels.hintFinger : labels.hintMouse)}</span>
       <span class="xbs-count"></span>
       <button type="button" class="xbs-done"></button>
     </div>`
@@ -325,7 +339,7 @@ function resizeCanvas(session: Session) {
 }
 
 function updateCounter(session: Session) {
-  session.counter.textContent = `Cuts: ${session.cuts}`
+  session.counter.textContent = (session.options.labels ?? ENGLISH).cuts.replace("{n}", String(session.cuts))
   session.counter.classList.toggle("xbs-hidden", session.cuts === 0)
 }
 

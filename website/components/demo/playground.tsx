@@ -15,6 +15,8 @@ import {
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { fill } from "@/lib/i18n"
+import type { Dict } from "@/lib/dictionaries/en"
 import { XMark } from "@/components/site/logo"
 import { chargePost, collapsePost } from "./charge"
 import { explode } from "./fx"
@@ -34,16 +36,6 @@ const FEED: Post[] = [
   { id: "leo", name: "Leo P.", handle: "leo_p", text: "Coffee, playlist, and off we go.", color: "#00ba7c", time: "2h", stats: ["2", "", "19", "880"] },
 ]
 
-const ANIMATIONS: { value: Animation; label: string; hint: string; icon: LucideIcon }[] = [
-  { value: "explode", label: "Explosion", hint: "Long press to blow it up", icon: BombIcon },
-  { value: "samurai", label: "Samurai", hint: "Click, then slice it", icon: SwordIcon },
-  { value: "off", label: "Off", hint: "Block instantly", icon: ZapIcon },
-]
-
-const ACTIONS: { value: Action; label: string; hint: string }[] = [
-  { value: "block", label: "Block", hint: "They can't follow you or see your posts" },
-  { value: "mute", label: "Mute", hint: "Gone from your feed, and they won't know" },
-]
 
 type Toast = { key: number; id: string; text: string; tone: "block" | "mute" | "allow"; undo?: boolean }
 
@@ -114,7 +106,18 @@ const RAIL: LucideIcon[] = [HomeIcon, SearchIcon, BellIcon, MailIcon, UserIcon]
  * popup's animation and action settings beside it. Blocking here runs the
  * extension's own animations (ported), and nothing leaves the page.
  */
-function Playground() {
+function Playground({ t, x, samurai }: { t: Dict["playground"]; x: Dict["x"]; samurai: Dict["samurai"] }) {
+  // The posts in the page's language (names and handles stay)
+  const feed = React.useMemo(() => FEED.map((post, i) => ({ ...post, text: t.posts[i] ?? post.text })), [t.posts])
+  const animations: { value: Animation; label: string; hint: string; icon: LucideIcon }[] = [
+    { value: "explode", label: t.explode, hint: t.explodeHint, icon: BombIcon },
+    { value: "samurai", label: t.samurai, hint: t.samuraiHint, icon: SwordIcon },
+    { value: "off", label: t.off, hint: t.offHint, icon: ZapIcon },
+  ]
+  const actions: { value: Action; label: string; hint: string }[] = [
+    { value: "block", label: t.block, hint: t.blockHint },
+    { value: "mute", label: t.mute, hint: t.muteHint },
+  ]
   const [animation, setAnimation] = React.useState<Animation>("explode")
   const [action, setAction] = React.useState<Action>("block")
   const [round, setRound] = React.useState(0)
@@ -130,7 +133,7 @@ function Playground() {
   const charge = React.useRef<{ cancel: () => void } | null>(null)
   const toastKey = React.useRef(0)
 
-  const badLeft = FEED.filter((p) => p.bad && !gone.has(p.id)).length
+  const badLeft = feed.filter((p) => p.bad && !gone.has(p.id)).length
 
   const toast = React.useCallback((next: Omit<Toast, "key">) => {
     const key = ++toastKey.current
@@ -145,12 +148,12 @@ function Playground() {
       setCounts((c) => ({ ...c, [how]: c[how] + 1 }))
       toast({
         id: post.id,
-        text: `@${post.handle} ${how === "mute" ? "muted" : "blocked"} on X`,
+        text: fill(how === "mute" ? t.toastMuted : t.toastBlocked, { handle: post.handle }),
         tone: how,
         undo: true,
       })
     },
-    [toast]
+    [toast, t.toastBlocked, t.toastMuted]
   )
 
   function block(post: Post, event?: { clientX: number; clientY: number }) {
@@ -160,7 +163,8 @@ function Playground() {
     const how = action
     if (animation === "samurai") {
       startSamurai(el, {
-        doneLabel: `Done · ${how} @${post.handle}`,
+        doneLabel: fill(how === "mute" ? t.doneMute : t.doneBlock, { handle: post.handle }),
+        labels: samurai,
         onFinish: () => collapsePost(el, () => handled(post, how)),
       })
     } else if (animation === "explode") {
@@ -217,7 +221,7 @@ function Playground() {
       if (next.has(post.id)) next.delete(post.id)
       else {
         next.add(post.id)
-        toast({ id: post.id, text: `@${post.handle} will never be blocked`, tone: "allow" })
+        toast({ id: post.id, text: fill(t.toastAllowed, { handle: post.handle }), tone: "allow" })
       }
       return next
     })
@@ -233,7 +237,7 @@ function Playground() {
 
   React.useEffect(() => () => charge.current?.cancel(), [])
 
-  const firstBad = FEED.find((p) => p.bad && !gone.has(p.id) && !allowed.has(p.id))
+  const firstBad = feed.find((p) => p.bad && !gone.has(p.id) && !allowed.has(p.id))
 
   return (
     <div className="grid border lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -267,20 +271,21 @@ function Playground() {
           <div className="relative min-w-0">
             <div className="grid grid-cols-2 border-b border-x-line text-[15px]">
               <span className="relative py-3.5 text-center font-bold text-x-text">
-                For you
+                {x.forYou}
                 <span className="absolute bottom-0 left-1/2 h-1 w-14 -translate-x-1/2 rounded-full bg-brand" />
               </span>
-              <span className="py-3.5 text-center text-x-dim">Following</span>
+              <span className="py-3.5 text-center text-x-dim">{x.following}</span>
             </div>
 
             <div key={round} className="min-h-[540px]">
-              {FEED.map((post) => {
+              {feed.map((post) => {
                 const isAllowed = allowed.has(post.id)
                 const guide = !touched && post === firstBad
                 return (
                   <XPost
                     key={post.id}
                     post={post}
+                    verifiedLabel={x.verified}
                     ref={(el) => {
                       if (el) posts.current.set(post.id, el)
                     }}
@@ -288,7 +293,7 @@ function Playground() {
                       <>
                         <button
                           type="button"
-                          aria-label={isAllowed ? `Stop always allowing @${post.handle}` : `Always allow @${post.handle}`}
+                          aria-label={fill(isAllowed ? t.unallow : t.allow, { handle: post.handle })}
                           aria-pressed={isAllowed}
                           onClick={() => toggleAllow(post)}
                           className={cn(
@@ -301,7 +306,7 @@ function Playground() {
                         <span className="relative">
                           <button
                             type="button"
-                            aria-label={`${action === "mute" ? "Mute" : "Block"} @${post.handle}${animation === "explode" ? " (hold)" : ""}`}
+                            aria-label={`${fill(action === "mute" ? t.muteLabel : t.blockLabel, { handle: post.handle })}${animation === "explode" ? ` ${t.hold}` : ""}`}
                             disabled={isAllowed}
                             onPointerDown={(e) => startCharge(post, e)}
                             onPointerUp={stopCharge}
@@ -324,7 +329,7 @@ function Playground() {
                             <span className="pointer-events-none absolute top-1/2 left-full z-10 ml-1 flex -translate-y-1/2 items-center motion-safe:animate-[nudge_1s_ease-in-out_infinite]">
                               <span className="block size-0 border-y-[6px] border-r-[6px] border-y-transparent border-r-block" />
                               <span className="block bg-block px-2.5 py-1 font-heading text-[11px] tracking-[0.08em] whitespace-nowrap text-white uppercase">
-                                {animation === "explode" ? "Hold me" : "Click me"}
+                                {animation === "explode" ? t.holdMe : t.clickMe}
                               </span>
                             </span>
                           ) : null}
@@ -337,9 +342,9 @@ function Playground() {
 
               {badLeft === 0 ? (
                 <div className="pop-in flex flex-col items-center gap-3 px-6 py-10 text-center">
-                  <p className="text-[17px] font-bold text-x-text">Your feed is clean.</p>
+                  <p className="text-[17px] font-bold text-x-text">{t.cleanTitle}</p>
                   <p className="max-w-xs text-sm text-x-dim">
-                    That&apos;s the whole idea. On x.com, XBlock blocks them for real.
+                    {t.cleanBody}
                   </p>
                   <button
                     type="button"
@@ -347,7 +352,7 @@ function Playground() {
                     className="mt-1 inline-flex items-center gap-2 rounded-full border border-x-line px-4 py-2 text-sm font-bold text-x-text hover:bg-x-hover"
                   >
                     <RotateCcwIcon className="size-4" aria-hidden="true" />
-                    Bring the trolls back
+                    {t.cleanButton}
                   </button>
                 </div>
               ) : null}
@@ -368,7 +373,7 @@ function Playground() {
                   <span>{t.text}</span>
                   {t.undo ? (
                     <button type="button" onClick={() => undo(t.id)} className="font-bold underline-offset-2 hover:underline">
-                      Undo
+                      {t.undo}
                     </button>
                   ) : null}
                 </div>
@@ -379,36 +384,32 @@ function Playground() {
       </div>
 
       {/* The extension's settings, as in its popup */}
-      <aside className="flex flex-col gap-8 border-t p-5 sm:p-6 lg:border-t-0 lg:border-l" aria-label="XBlock settings">
+      <aside className="flex flex-col gap-8 border-t p-5 sm:p-6 lg:border-t-0 lg:border-l" aria-label={t.settings}>
         <div>
           <p className="font-heading text-[11px] tracking-[0.14em] text-muted-foreground uppercase">
-            Blocked in this demo
+            {t.counter}
           </p>
           <p className="mt-2 flex items-baseline gap-3">
             <span className="font-heading text-6xl font-medium tracking-[-0.04em] tabular-nums">
               {counts.block + counts.mute}
             </span>
             <span className="text-sm text-muted-foreground">
-              {counts.block} blocked · {counts.mute} muted
+              {fill(t.counterDetail, { blocked: counts.block, muted: counts.mute })}
             </span>
           </p>
         </div>
 
-        <Choice label="Block animation" value={animation} options={ANIMATIONS} onChange={setAnimation} columns={3} />
-        <Choice label="The block button on a post should" value={action} options={ACTIONS} onChange={setAction} columns={2} />
+        <Choice label={t.animation} value={animation} options={animations} onChange={setAnimation} columns={3} />
+        <Choice label={t.action} value={action} options={actions} onChange={setAction} columns={2} />
 
         <div className="mt-auto flex items-center justify-between gap-3 border-t pt-5">
           <p className="text-[13px] leading-snug text-muted-foreground">
-            {animation === "explode"
-              ? "Hold a post's block button until it blows."
-              : animation === "samurai"
-                ? "Click a post's block button, then slice it. Esc puts it back."
-                : "Click a post's block button and it's gone."}
+            {animation === "explode" ? t.hintExplode : animation === "samurai" ? t.hintSamurai : t.hintOff}
           </p>
           <button
             type="button"
             onClick={reset}
-            aria-label="Reset the demo feed"
+            aria-label={t.reset}
             className="grid size-9 shrink-0 place-items-center border hover:bg-muted"
           >
             <RotateCcwIcon className="size-4" aria-hidden="true" />

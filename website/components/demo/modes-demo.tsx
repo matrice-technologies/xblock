@@ -4,19 +4,21 @@ import * as React from "react"
 import { BanIcon, EyeIcon, EyeOffIcon, VolumeXIcon, type LucideIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { fill } from "@/lib/i18n"
+import type { Dict } from "@/lib/dictionaries/en"
 import { useInView } from "./use-in-view"
 import { XPost, type Post } from "./x-post"
 
-type Mode = "autoblock" | "automute" | "hide" | "blur"
+export type Mode = "autoblock" | "automute" | "hide" | "blur"
 
-const MODES: { value: Mode; label: string; icon: LucideIcon; tone: string; note: string }[] = [
-  { value: "autoblock", label: "Block on X", icon: BanIcon, tone: "text-block border-block bg-block/10", note: "Blocked on X, for good. They can't see you either." },
-  { value: "automute", label: "Mute on X", icon: VolumeXIcon, tone: "text-mute border-mute bg-mute/10", note: "Muted on X. Gone from your feed, and they'll never know." },
-  { value: "hide", label: "Hide", icon: EyeOffIcon, tone: "text-foreground border-foreground bg-foreground/10", note: "Folded away in your browser. Nothing changes on X." },
-  { value: "blur", label: "Blur", icon: EyeIcon, tone: "text-purple border-purple bg-purple/10", note: "Blurred in your browser, one click to read it anyway." },
+const MODES: { value: Mode; icon: LucideIcon; tone: string }[] = [
+  { value: "autoblock", icon: BanIcon, tone: "text-block border-block bg-block/10" },
+  { value: "automute", icon: VolumeXIcon, tone: "text-mute border-mute bg-mute/10" },
+  { value: "hide", icon: EyeOffIcon, tone: "text-foreground border-foreground bg-foreground/10" },
+  { value: "blur", icon: EyeIcon, tone: "text-purple border-purple bg-purple/10" },
 ]
 
-const LIST = { name: "Crypto bots & spam", code: "XBK-9C07E", owner: "tom.debates", size: "3,902" }
+const LIST = { code: "XBK-9C07E", owner: "tom.debates", size: 3902 }
 
 const FEED: Post[] = [
   { id: "a", name: "Emma R.", handle: "emma_r", text: "Quick thread on my favourite tools for work.", color: "#794bc4", time: "4m" },
@@ -31,9 +33,12 @@ const CYCLE_MS = 3400
  * happens to the post of an account on the list. Cycles on its own until
  * someone picks a mode.
  */
-function ModesDemo() {
-  const [mode, setMode] = React.useState<Mode>("autoblock")
-  const [auto, setAuto] = React.useState(true)
+/** `still`: show one mode and stay on it. */
+function ModesDemo({ t, lang, still }: { t: Dict["modes"]; lang: string; still?: Mode }) {
+  const label: Record<Mode, string> = { autoblock: t.autoblock, automute: t.automute, hide: t.hide, blur: t.blur }
+  const note: Record<Mode, string> = { autoblock: t.autoblockNote, automute: t.automuteNote, hide: t.hideNote, blur: t.blurNote }
+  const [mode, setMode] = React.useState<Mode>(still ?? "autoblock")
+  const [auto, setAuto] = React.useState(still === undefined)
   const [revealed, setRevealed] = React.useState(false)
   const [ref, inView] = useInView<HTMLDivElement>()
 
@@ -58,16 +63,16 @@ function ModesDemo() {
         </span>
         <div className="min-w-0 flex-1">
           <p className="flex items-center gap-2 truncate text-sm font-semibold">
-            {LIST.name}
+            {t.listName}
             <span className="bg-block px-1.5 py-px font-heading text-[10px] tracking-[0.06em] text-white">{LIST.code}</span>
           </p>
           <p className="truncate text-[12px] text-muted-foreground">
-            by @{LIST.owner} · {LIST.size} accounts
+            {fill(t.by, { owner: LIST.owner, size: LIST.size.toLocaleString(lang) })}
           </p>
         </div>
       </div>
 
-      <div role="radiogroup" aria-label="Mode for this list" className="grid grid-cols-4 gap-px border-b bg-border">
+      <div role="radiogroup" aria-label={t.group} className="grid grid-cols-4 gap-px border-b bg-border">
         {MODES.map((m) => {
           const selected = m.value === mode
           const Icon = m.icon
@@ -88,7 +93,7 @@ function ModesDemo() {
               )}
             >
               <Icon className="size-4" aria-hidden="true" />
-              {m.label}
+              {label[m.value]}
               {selected ? (
                 <span key={auto ? mode : "picked"} className="absolute inset-x-0 bottom-0 h-0.5 bg-current" style={auto ? { animation: `story-progress ${CYCLE_MS}ms linear both`, transformOrigin: "left" } : undefined} />
               ) : null}
@@ -99,7 +104,8 @@ function ModesDemo() {
 
       {/* The feed, with the listed account's post treated as the mode says */}
       <div className="bg-x-bg">
-        {FEED.map((post) => {
+        {FEED.map((source, i) => {
+          const post = { ...source, text: t.posts[i] ?? source.text }
           if (!post.bad) return <XPost key={post.id} post={post} compact />
           const collapsed = onX
           const hidden = mode === "hide"
@@ -122,8 +128,8 @@ function ModesDemo() {
                 <div className="pop-in absolute inset-0 grid place-items-center p-3">
                   <div className="flex flex-wrap items-center justify-center gap-1.5 rounded-full border border-white/15 bg-black/60 px-3 py-1.5 text-[12px] text-white backdrop-blur">
                     <span className="rounded-full bg-block px-2 py-px font-semibold">crypto_king99</span>
-                    is blocked in
-                    <span className="rounded-full bg-white/15 px-2 py-px">{LIST.name}</span>
+                    {t.blockedIn}
+                    <span className="rounded-full bg-white/15 px-2 py-px">{t.listName}</span>
                     <button
                       type="button"
                       onClick={() => {
@@ -132,7 +138,7 @@ function ModesDemo() {
                       }}
                       className="ml-1 font-semibold text-brand hover:underline"
                     >
-                      Show
+                      {t.show}
                     </button>
                   </div>
                 </div>
@@ -144,9 +150,9 @@ function ModesDemo() {
 
       <div className="flex min-h-[3.75rem] items-center gap-3 border-t px-4 py-3" aria-live="polite">
         <span className={cn("shrink-0 border px-1.5 py-0.5 font-heading text-[10px] tracking-[0.08em] uppercase", current.tone)}>
-          {onX ? (mode === "autoblock" ? "Blocked" : "Muted") : "In your browser"}
+          {onX ? (mode === "autoblock" ? t.blocked : t.muted) : t.inBrowser}
         </span>
-        <p className="text-[13px] leading-snug text-muted-foreground">{current.note}</p>
+        <p className="text-[13px] leading-snug text-muted-foreground">{note[current.value]}</p>
       </div>
     </div>
   )

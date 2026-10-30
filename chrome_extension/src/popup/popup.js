@@ -1147,10 +1147,10 @@ function updateBatchUI() {
             chrome.runtime.sendMessage({ action: "startBatchBlock" });
         });
     } else if (batchRequested && batchStatus.state === "rate-limited") {
-        const resumeAt = batchStatus.resumeAt
-            ? new Date(batchStatus.resumeAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-            : "soon";
-        setBatchStatusText(`${i18n("batchRateLimitedUntil", resumeAt)}${blockedThisRun}`, "warning");
+        const message = batchStatus.resumeAt
+            ? i18n("batchRateLimitedUntil", new Date(batchStatus.resumeAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }))
+            : i18n("batchRateLimitedSoon");
+        setBatchStatusText(`${message}${blockedThisRun}`, "warning");
     } else if (batchRequested) {
         setBatchStatusText(
             batchStatus.current ? `${i18n("batchBlocking", escapeHtml(batchStatus.current.username))}${blockedThisRun}` : `${i18n("batchStarting")}${blockedThisRun}`,

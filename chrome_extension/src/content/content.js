@@ -1207,8 +1207,9 @@ document.addEventListener('click', event => {
 }, true);
 
 const X_UNBLOCK_WORDS = ['unblock', 'débloquer', 'desbloquear', 'sblocca', 'deblokkeren', 'odblokuj', 'blockierung aufheben', 'entsperren',
+    'nicht mehr blockieren', 'aufheben', 'batalkan blokir', 'buka blokir', // aufheben: "Blockierung von @x aufheben"
     'разблокировать', 'engeli kaldır', '解除', '해제', 'إلغاء حظر']; // 解除 / 해제: "release" (ja, zh, ko)
-const X_BLOCK_WORDS = ['block', 'bloquer', 'bloquear', 'blocca', 'blokkeren', 'zablokuj', 'blockieren', 'заблокировать', 'engelle',
+const X_BLOCK_WORDS = ['block', 'bloquer', 'bloquear', 'blocca', 'blokkeren', 'zablokuj', 'blockieren', 'blokir', 'заблокировать', 'engelle',
     'ブロック', '차단', '封鎖', '屏蔽', 'حظر'];
 
 // "block", "unblock" or null for the confirmation dialog the user just accepted

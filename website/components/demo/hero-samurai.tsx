@@ -3,6 +3,9 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { fill } from "@/lib/i18n"
+import type { Dict } from "@/lib/dictionaries/en"
+import { Rich } from "@/components/site/rich"
 import { drawFx, easeOutCubic, heatColor, rand, reducedMotion, stepFx, type FxItem } from "./fx"
 import {
   polygonArea,
@@ -603,7 +606,8 @@ function createField(stage: HTMLDivElement, source: HTMLDivElement, callbacks: C
 }
 
 /** The playable Samurai stage of the hero. */
-function HeroSamurai({ className }: { className?: string }) {
+/** `hud`: show the prompt and score under the stage (the store images leave it out). */
+function HeroSamurai({ t, verifiedLabel, hud = true, className }: { t: Dict["stage"]; verifiedLabel: string; hud?: boolean; className?: string }) {
   const stageRef = React.useRef<HTMLDivElement>(null)
   const sourceRef = React.useRef<HTMLDivElement>(null)
   const [cuts, setCuts] = React.useState(0)
@@ -639,7 +643,7 @@ function HeroSamurai({ className }: { className?: string }) {
       <div
         ref={stageRef}
         className="relative h-[340px] w-full cursor-none touch-pan-y select-none sm:h-[420px] lg:h-[480px]"
-        aria-label="A troll's post you can slice, Samurai style"
+        aria-label={t.label}
         role="img"
       >
         {/* The stage's kanji, as in the extension: 斬, to cut */}
@@ -652,10 +656,11 @@ function HeroSamurai({ className }: { className?: string }) {
 
         {/* The posts to clone, measured off-screen at the size they'll float at */}
         <div ref={sourceRef} aria-hidden="true" className="pointer-events-none invisible absolute top-0 left-0 w-[min(500px,calc(100%-32px))]">
-          {TROLLS.map((post) => (
+          {TROLLS.map((post, i) => (
             <div key={post.id} className="xbs-card w-full bg-black text-x-text" style={{ borderColor: "rgba(255, 255, 255, 0.15)" }}>
               <XPost
-                post={post}
+                post={{ ...post, text: t.posts[i] ?? post.text }}
+                verifiedLabel={verifiedLabel}
                 className="border-b-0 bg-transparent"
                 xblock={
                   <span className="grid size-[34px] place-items-center rounded-full bg-block/15 text-block">
@@ -670,24 +675,24 @@ function HeroSamurai({ className }: { className?: string }) {
         {toast ? (
           <div key={toast.key} className="pop-in absolute inset-x-0 bottom-6 z-30 flex justify-center">
             <span className="flex items-center gap-2 rounded-full border border-success/50 bg-[#0f1419] px-4 py-2 text-sm font-semibold text-success shadow-lg">
-              ✓ <b className="text-white">@{toast.handle}</b> blocked
+              ✓ <Rich text={fill(t.blocked, { handle: toast.handle })} bold="font-bold text-white" />
             </span>
           </div>
         ) : null}
       </div>
 
       {/* The HUD, like the extension's: what to do, and the score */}
-      <div className="relative z-10 mx-auto -mt-2 flex items-center gap-3 rounded-full border border-white/12 bg-[rgba(12,12,16,0.72)] py-1.5 pr-1.5 pl-4 text-[13px] text-white/85 backdrop-blur-md">
+      <div hidden={!hud} className="relative z-10 mx-auto -mt-2 flex items-center gap-3 rounded-full border border-white/12 bg-[rgba(12,12,16,0.72)] py-1.5 pr-1.5 pl-4 text-[13px] text-white/85 backdrop-blur-md">
         <span className="whitespace-nowrap">
           ⚔{" "}
-          <span className="sm:hidden">{driver === "ghost" ? "Swipe it, your turn" : "Slice it"}</span>
+          <span className="sm:hidden">{driver === "ghost" ? t.takeOverShort : t.sliceShort}</span>
           <span className="hidden sm:inline">
-            {driver === "ghost" ? "Swipe through the post to take over" : `Slice it with your ${finger ? "finger" : "mouse"}`}
+            {driver === "ghost" ? t.takeOver : finger ? t.sliceFinger : t.sliceMouse}
           </span>
         </span>
-        <span className="font-bold whitespace-nowrap text-[#ff5577] tabular-nums">Cuts: {cuts}</span>
+        <span className="font-bold whitespace-nowrap text-[#ff5577] tabular-nums">{fill(t.cuts, { n: cuts })}</span>
         <span className="whitespace-nowrap rounded-full bg-gradient-to-br from-[#ff2d55] to-[#c1121f] px-3 py-1.5 font-bold text-white tabular-nums shadow-[0_4px_18px_rgba(255,45,85,0.4)]">
-          {sliced} sliced
+          {fill(t.sliced, { n: sliced })}
         </span>
       </div>
     </div>

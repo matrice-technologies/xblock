@@ -1,5 +1,5 @@
 {
-  "extDescription": { "message": "Block, hide, and control what you see on X with shared blocklists and real-time protection." },
+  "extDescription": { "message": "Block trolls on X in one click, share your block lists, and subscribe to others'. Free, open source, no account." },
   "actionTitle": { "message": "XBlock - Sanitise your X experience" },
 
   "unknownError": { "message": "Unknown error" },
@@ -110,6 +110,7 @@
   "batchOpening": { "message": "Opening the batch window…" },
   "batchShowWindow": { "message": "show it" },
   "batchRateLimitedUntil": { "message": "X is rate limiting blocks, resuming at $1" },
+  "batchRateLimitedSoon": { "message": "X is rate limiting blocks, resuming soon" },
   "batchBlocking": { "message": "Blocking @$1…" },
   "batchStarting": { "message": "Starting…" },
   "batchBlockedThisRun": { "message": "$1 blocked this run" },

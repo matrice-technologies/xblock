@@ -4,6 +4,9 @@ import * as React from "react"
 import { ArrowDownIcon, CheckIcon, CopyIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { fill } from "@/lib/i18n"
+import type { Dict } from "@/lib/dictionaries/en"
+import { Rich } from "@/components/site/rich"
 import { useInView } from "./use-in-view"
 import { BlockGlyph, XPost, type Post } from "./x-post"
 
@@ -22,20 +25,23 @@ const BEAT_MS = 1100
  * One block, many people covered: you block a troll, it lands in your list,
  * and everyone subscribed to the list gets it too.
  */
-function ShareDemo() {
-  const [tick, setTick] = React.useState(0)
+/** `still`: hold on one moment of the loop (a tick count) instead of playing it. */
+function ShareDemo({ t, lang, still }: { t: Dict["share"]; lang: string; still?: number }) {
+  const [playing, setTick] = React.useState(0)
+  const tick = still ?? playing
   const [copied, setCopied] = React.useState(false)
   const [ref, inView] = useInView<HTMLDivElement>()
 
   React.useEffect(() => {
-    if (!inView) return
+    if (!inView || still !== undefined) return
     const timer = window.setInterval(() => setTick((t) => t + 1), BEAT_MS)
     return () => window.clearInterval(timer)
-  }, [inView])
+  }, [inView, still])
 
   const beat = tick % 3
   const round = Math.floor(tick / 3)
-  const troll = TROLLS[round % TROLLS.length]
+  const index = round % TROLLS.length
+  const troll = { ...TROLLS[index], text: t.posts[index] ?? TROLLS[index].text }
   const listed = 127 + round + (beat >= 1 ? 1 : 0)
 
   async function copy() {
@@ -58,7 +64,7 @@ function ShareDemo() {
           className="pop-in border-b-0"
         />
         <div className="flex items-center justify-between border-t border-x-line bg-x-bg px-4 py-2 text-[12px] text-x-dim">
-          <span>You block them, once</span>
+          <span>{t.youBlock}</span>
           <span className={cn("grid size-7 place-items-center rounded-full transition-colors", beat === 0 ? "bg-block/15 text-block" : "")}>
             <BlockGlyph className="size-4" />
           </span>
@@ -69,19 +75,21 @@ function ShareDemo() {
 
       <div className={cn("flex items-center gap-3 border bg-background p-4 transition-shadow duration-300", beat === 1 && "shadow-[0_0_0_3px_color-mix(in_oklch,var(--brand)_35%,transparent)]")}>
         <div className="min-w-0 flex-1">
-          <p className="font-heading text-[10px] tracking-[0.14em] text-muted-foreground uppercase">Your block list</p>
+          <p className="font-heading text-[10px] tracking-[0.14em] text-muted-foreground uppercase">{t.yourList}</p>
           <p className="mt-1 text-sm">
-            <span key={listed} className="inline-block font-semibold tabular-nums pop-in">{listed}</span> accounts
+            <span key={listed} className="pop-in inline-block">
+              <Rich text={fill(t.accounts, { n: `**${listed.toLocaleString(lang)}**` })} bold="font-semibold tabular-nums" />
+            </span>
           </p>
         </div>
         <button
           type="button"
           onClick={copy}
           className="flex items-center gap-2 bg-block px-3 py-2 font-heading text-[12px] tracking-[0.08em] text-white hover:bg-block/85"
-          aria-label={`Copy the share code ${CODE}`}
+          aria-label={fill(t.copy, { code: CODE })}
         >
           {copied ? <CheckIcon className="size-3.5" /> : <CopyIcon className="size-3.5" />}
-          {copied ? "Copied" : CODE}
+          {copied ? t.copied : CODE}
         </button>
       </div>
 
@@ -89,8 +97,8 @@ function ShareDemo() {
 
       <div className="border bg-background p-4">
         <div className="flex items-center justify-between">
-          <p className="font-heading text-[10px] tracking-[0.14em] text-muted-foreground uppercase">Subscribers</p>
-          <p className="text-[12px] text-muted-foreground tabular-nums">1,248 people</p>
+          <p className="font-heading text-[10px] tracking-[0.14em] text-muted-foreground uppercase">{t.subscribers}</p>
+          <p className="text-[12px] text-muted-foreground tabular-nums">{t.people}</p>
         </div>
         <div className="mt-3 grid grid-cols-12 gap-1.5">
           {SUBSCRIBERS.map((color, i) => (
@@ -116,10 +124,10 @@ function ShareDemo() {
         <p className="mt-3 min-h-5 text-[13px] text-muted-foreground">
           {beat === 2 ? (
             <span className="pop-in inline-block">
-              <b className="text-foreground">@{troll.handle}</b> is gone for all of them.
+              <Rich text={fill(t.gone, { handle: troll.handle })} bold="font-bold text-foreground" />
             </span>
           ) : (
-            "Everyone who subscribed to your code."
+            t.everyone
           )}
         </p>
       </div>

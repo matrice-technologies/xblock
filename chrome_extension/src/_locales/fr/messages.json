@@ -1,5 +1,5 @@
 {
-  "extDescription": { "message": "Bloquez, masquez et contrôlez ce que vous voyez sur X grâce à des listes de blocage partagées et une protection en temps réel." },
+  "extDescription": { "message": "Bloquez les trolls sur X en un clic, partagez vos listes de blocage et suivez celles des autres. Gratuit, open source, sans compte." },
   "actionTitle": { "message": "XBlock - Assainissez votre expérience X" },
 
   "unknownError": { "message": "Erreur inconnue" },
@@ -110,6 +110,7 @@
   "batchOpening": { "message": "Ouverture de la fenêtre de blocage…" },
   "batchShowWindow": { "message": "l'afficher" },
   "batchRateLimitedUntil": { "message": "X limite les blocages, reprise à $1" },
+  "batchRateLimitedSoon": { "message": "X limite les blocages, reprise sous peu" },
   "batchBlocking": { "message": "Blocage de @$1…" },
   "batchStarting": { "message": "Démarrage…" },
   "batchBlockedThisRun": { "message": "$1 bloqué(s) pendant cette session" },

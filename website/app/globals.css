@@ -132,6 +132,8 @@
   h2,
   h3 {
     @apply font-heading text-balance uppercase;
+    /* Japanese breaks between phrases, not in the middle of a word */
+    word-break: auto-phrase;
   }
 }
 

@@ -32,9 +32,11 @@ Schema changes go in `server/prisma/schema.prisma`; run `npm --prefix server run
 
 To test subscriptions or batch blocking locally, create a list owned by someone else with `npm --prefix server run seed:list -- handle1 handle2 ...` and subscribe to the printed share code.
 
-Translations live in `chrome_extension/src/_locales/<lang>/messages.json` (English is the default, French is included); Chrome picks the language from the browser settings. In code, use `i18n("key", ...)`; in `popup.html`, tag elements with `data-i18n`, `data-i18n-placeholder` or `data-i18n-tooltip`. To add a language, copy `en/messages.json` to a new folder and translate the `message` values.
+Translations live in `chrome_extension/src/_locales/<lang>/messages.json` (English is the default; French, Spanish, German, Japanese, Brazilian Portuguese and Indonesian are included); Chrome picks the language from the browser settings. In code, use `i18n("key", ...)`; in `popup.html`, tag elements with `data-i18n`, `data-i18n-placeholder` or `data-i18n-tooltip`. To add a language, copy `en/messages.json` to a new folder and translate the `message` values.
 
 Hosting your own server and releasing the extension are documented in [DEPLOY.md](DEPLOY.md).
+
+The website's text lives in `website/lib/dictionaries/<lang>.ts`, one file per language, all the same shape as `en.ts`; `node website/scripts/check-dictionary.cjs` checks them. The Chrome Web Store images and listings for every language are in `media/store/<lang>/`, rendered from the website by `media/store/render.cjs`.
 
 The public website lives in `website/` (Next.js, Tailwind and shadcn/ui). Run it with `npm --prefix website install` then `npm --prefix website run dev`; `website/Dockerfile` builds it for production.
 

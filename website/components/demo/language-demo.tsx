@@ -3,6 +3,7 @@
 import * as React from "react"
 import { CheckIcon } from "lucide-react"
 
+import { fill } from "@/lib/i18n"
 import { useInView } from "./use-in-view"
 
 const HANDLE = "troll_of_the_night"
@@ -24,7 +25,7 @@ const STEP_MS = 2400
  * language X is in: the dialog cycles through languages, the list catches
  * each one.
  */
-function LanguageDemo() {
+function LanguageDemo({ added }: { added: string }) {
   const [index, setIndex] = React.useState(0)
   const [pressed, setPressed] = React.useState(false)
   const [ref, inView] = useInView<HTMLDivElement>()
@@ -82,7 +83,7 @@ function LanguageDemo() {
         aria-live="polite"
       >
         <CheckIcon className="size-3.5" aria-hidden="true" />
-        @{HANDLE} added to your XBlock list
+        {fill(added, { handle: HANDLE })}
       </p>
     </div>
   )
