@@ -16,7 +16,7 @@ const SAMURAI_MIN_CUT_AREA = 0.004;
 const SAMURAI_TRAIL_MS = 100;
 const SAMURAI_INTRO_MS = 560;
 // Once the post is cut, this long without a new cut finishes the job, as if Done was clicked
-const SAMURAI_IDLE_FINISH_MS = 5000;
+const SAMURAI_IDLE_FINISH_MS = 2000;
 
 // "explode" (long press) or "samurai"; the on/off switch is the user's enableAnimation
 let blockAnimationStyle = 'explode';

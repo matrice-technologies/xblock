@@ -40,6 +40,8 @@ const PIECES_TO_FINISH = 8
 const TRAIL_MS = 110
 const INTRO_MS = 520
 const NEXT_MS = 1300
+// Once the post is cut, this long without a new cut and it falls, as in the extension
+const IDLE_FINISH_MS = 2000
 // The ghost blade waits this long after a post lands, and after the visitor's last move
 const AUTO_DELAY_MS = 1400
 const USER_IDLE_MS = 6000
@@ -74,6 +76,8 @@ type Round = {
   cuts: number
   /** Scripted slashes still to come, from the ghost blade. */
   script: { at: number; from: Point; to: Point }[]
+  /** The timer that finishes the post when the cutting stops. */
+  idle: number
 }
 
 type Callbacks = {
@@ -173,7 +177,7 @@ function createField(stage: HTMLDivElement, source: HTMLDivElement, callbacks: C
     const round: Round = {
       post: TROLLS[index], layer, pieces: [piece], width: w, height: h,
       origin: { x: (width - w) / 2, y: (height - h) / 2 }, bornAt: performance.now(),
-      state: "intro", cuts: 0, script: [],
+      state: "intro", cuts: 0, script: [], idle: 0,
     }
     rounds.push(round)
     callbacks.onSpawn(round.post)
@@ -243,6 +247,8 @@ function createField(stage: HTMLDivElement, source: HTMLDivElement, callbacks: C
     })
 
     round.cuts++
+    window.clearTimeout(round.idle)
+    round.idle = window.setTimeout(() => finish(round), IDLE_FINISH_MS)
     callbacks.onCut(round.cuts)
     slashFx(round, piece, chordStart, chordEnd)
     const floating = round.pieces.filter((p) => !p.falling).length
@@ -280,6 +286,7 @@ function createField(stage: HTMLDivElement, source: HTMLDivElement, callbacks: C
   function finish(round: Round) {
     if (round.state === "done") return
     round.state = "done"
+    window.clearTimeout(round.idle)
     round.script = []
     round.pieces.forEach((piece) => {
       if (!piece.falling) drop(piece)
@@ -600,7 +607,10 @@ function createField(stage: HTMLDivElement, source: HTMLDivElement, callbacks: C
     stage.removeEventListener("pointerup", onUp)
     stage.removeEventListener("pointerleave", onLeave)
     document.removeEventListener("visibilitychange", onVisibility)
-    rounds.forEach((r) => r.layer.remove())
+    rounds.forEach((r) => {
+      window.clearTimeout(r.idle)
+      r.layer.remove()
+    })
     canvas.remove()
   }
 }

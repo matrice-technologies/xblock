@@ -16,7 +16,7 @@ const MIN_CUT_AREA = 0.004
 const TRAIL_MS = 100
 const INTRO_MS = 560
 // Once the post is cut, this long without a new cut finishes the job, as if Done was clicked
-const IDLE_FINISH_MS = 5000
+const IDLE_FINISH_MS = 2000
 
 export type Point = { x: number; y: number; cut?: boolean }
 type Piece = {
