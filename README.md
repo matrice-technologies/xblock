@@ -36,6 +36,8 @@ Translations live in `src/_locales/<lang>/messages.json` (English is the default
 
 Hosting your own server and releasing the extension are documented in [DEPLOY.md](DEPLOY.md).
 
+The public website lives in `website/` (Next.js, Tailwind and shadcn/ui). Run it with `npm --prefix website install` then `npm --prefix website run dev`; `website/Dockerfile` builds it for production.
+
 ## Contributing
 Want to help improve XBlock? Issues and pull requests are welcome.
 

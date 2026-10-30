@@ -1,0 +1,512 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* X's own palette: paper white and "lights out" black, X blue for the brand,
+   X red for everything that blocks, and X's greens, oranges and pinks for the
+   rest. Square corners and the mono headings come from the Matrice site. */
+:root,
+.light {
+  --background: #ffffff;
+  --foreground: #0f1419;
+  --card: #ffffff;
+  --card-foreground: #0f1419;
+  --popover: #ffffff;
+  --popover-foreground: #0f1419;
+  --primary: #0f1419;
+  --primary-foreground: #ffffff;
+  --secondary: #eff3f4;
+  --secondary-foreground: #0f1419;
+  --muted: #f7f9f9;
+  --muted-foreground: #536471;
+  --accent: #eff3f4;
+  --accent-foreground: #0f1419;
+  --destructive: #f4212e;
+  --border: #e1e8ed;
+  --input: #cfd9de;
+  --ring: #1d9bf0;
+  --radius: 0;
+  --brand: #1a8cd8;
+  /* Block on X, the explosion, the slash */
+  --block: #f4212e;
+  /* Mute on X */
+  --mute: #ff7a00;
+  --success: #00ba7c;
+  --pink: #f91880;
+  --purple: #7856ff;
+  --yellow: #ffd400;
+  /* The X look-alike inside the demos */
+  --x-bg: #ffffff;
+  --x-line: #eff3f4;
+  --x-text: #0f1419;
+  --x-dim: #536471;
+  --x-hover: rgba(15, 20, 25, 0.04);
+}
+
+.dark {
+  --background: #000000;
+  --foreground: #e7e9ea;
+  --card: #16181c;
+  --card-foreground: #e7e9ea;
+  --popover: #16181c;
+  --popover-foreground: #e7e9ea;
+  --primary: #e7e9ea;
+  --primary-foreground: #0f1419;
+  --secondary: #202327;
+  --secondary-foreground: #e7e9ea;
+  --muted: #16181c;
+  --muted-foreground: #71767b;
+  --accent: #202327;
+  --accent-foreground: #e7e9ea;
+  --destructive: #f4212e;
+  --border: #2f3336;
+  --input: #333639;
+  --ring: #1d9bf0;
+  --brand: #1d9bf0;
+  --block: #f4212e;
+  --mute: #ff7a00;
+  --success: #00ba7c;
+  --x-bg: #000000;
+  --x-line: #2f3336;
+  --x-text: #e7e9ea;
+  --x-dim: #71767b;
+  --x-hover: rgba(231, 233, 234, 0.03);
+}
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-heading: var(--font-heading);
+  --color-brand: var(--brand);
+  --color-block: var(--block);
+  --color-mute: var(--mute);
+  --color-success: var(--success);
+  --color-pink: var(--pink);
+  --color-purple: var(--purple);
+  --color-yellow: var(--yellow);
+  --color-x-bg: var(--x-bg);
+  --color-x-line: var(--x-line);
+  --color-x-text: var(--x-text);
+  --color-x-dim: var(--x-dim);
+  --color-x-hover: var(--x-hover);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply scroll-smooth font-sans;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-heading text-balance uppercase;
+  }
+}
+
+/* Diagonal hatching for the gutters beside module rows. */
+@utility bg-hatch {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--border) 0 1px,
+    transparent 1px 7px
+  );
+}
+
+/* Dot grid behind diagrams. */
+@utility bg-dots {
+  background-image: radial-gradient(
+    color-mix(in oklch, var(--foreground) 16%, transparent) 1px,
+    transparent 1.2px
+  );
+  background-size: 16px 16px;
+}
+
+/* Fine vertical stripes, a hairline every 8px. */
+@utility bg-stems {
+  background-image: repeating-linear-gradient(
+    90deg,
+    color-mix(in oklch, var(--foreground) 4%, transparent) 0 1px,
+    transparent 1px 8px
+  );
+}
+
+/* Slides a doubled row by one copy's width, so it loops without a seam. */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* The hero coming in: blocks rise into place (.rise), the headline word by
+   word (.rise-word, components/site/rise-words.tsx), each after its own
+   --rise-delay, sharpening as it lands. */
+.rise,
+.rise-word {
+  animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--rise-delay, 0s);
+}
+.rise-word {
+  display: inline-block;
+  animation-name: rise-word;
+  animation-duration: 1s;
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+@keyframes rise-word {
+  from {
+    opacity: 0;
+    transform: translateY(0.45em) rotate(1.5deg);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+/* The bar under the active choice, timing an automatic rotation. */
+@keyframes story-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* The playground's "Hold me" hint, pointing at the block button. */
+@keyframes nudge {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 5px 0;
+  }
+}
+
+/* A toast or pill popping in. */
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.pop-in {
+  animation: pop-in 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* A dot that breathes while something runs. */
+@keyframes live-dot {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in oklch, var(--block) 60%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 5px color-mix(in oklch, var(--block) 0%, transparent);
+  }
+}
+.live-dot {
+  animation: live-dot 1.4s ease-in-out infinite;
+}
+
+/* Progress bars of the batch overlay: the fill's gradient drifts. */
+@keyframes fill-drift {
+  to {
+    background-position: -200% 0;
+  }
+}
+.fill-drift {
+  background-image: linear-gradient(
+    90deg,
+    var(--mute),
+    var(--block),
+    var(--mute)
+  );
+  background-size: 200% 100%;
+  animation: fill-drift 2.4s linear infinite;
+}
+
+/* The block button's long press: the post trembles a little more each frame
+   (set from JS), and the red frame that grows around it. */
+.charge-frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .rise-word,
+  .pop-in,
+  .live-dot,
+  .fill-drift {
+    animation: none;
+  }
+}
+
+/* Samurai stage (components/demo/samurai.ts), from the extension's
+   src/css/samurai.css. */
+.xbs-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow: hidden;
+  cursor: none;
+  touch-action: none;
+  user-select: none;
+}
+.xbs-backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(40, 6, 14, 0.55) 0%,
+      rgba(4, 4, 8, 0.92) 75%
+    ),
+    rgba(4, 4, 8, 0.6);
+  backdrop-filter: blur(8px) saturate(0.7);
+  opacity: 0;
+  transition: opacity 380ms ease;
+}
+.xbs-kanji {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -54%) scale(0.9);
+  font:
+    900 min(62vh, 62vw) / 1 "Hiragino Mincho ProN",
+    "Yu Mincho",
+    "Noto Serif JP",
+    serif;
+  color: rgba(255, 45, 85, 0.07);
+  opacity: 0;
+  transition:
+    opacity 700ms ease 120ms,
+    transform 900ms cubic-bezier(0.2, 0.8, 0.2, 1) 120ms;
+  pointer-events: none;
+}
+.xbs-open .xbs-backdrop,
+.xbs-open .xbs-kanji {
+  opacity: 1;
+}
+.xbs-open .xbs-kanji {
+  transform: translate(-50%, -54%) scale(1);
+}
+.xbs-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.xbs-piece {
+  position: absolute;
+  inset: 0;
+  filter: drop-shadow(0 18px 36px rgba(0, 0, 0, 0.55));
+  will-change: transform;
+}
+.xbs-clip {
+  position: absolute;
+  inset: 0;
+}
+.xbs-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid;
+  border-radius: 16px;
+  box-sizing: border-box;
+}
+.xbs-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.xbs-hud {
+  position: absolute;
+  left: 50%;
+  bottom: 36px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 8px 8px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(12, 12, 16, 0.72);
+  backdrop-filter: blur(12px);
+  color: rgba(255, 255, 255, 0.85);
+  font:
+    500 14px/1.2 var(--font-sans),
+    sans-serif;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, 16px);
+  transition:
+    opacity 300ms ease 250ms,
+    transform 400ms cubic-bezier(0.2, 0.8, 0.2, 1) 250ms;
+}
+.xbs-open .xbs-hud {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.xbs-count {
+  color: #ff5577;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.xbs-hidden {
+  display: none;
+}
+.xbs-done {
+  cursor: pointer;
+  padding: 9px 18px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff2d55, #c1121f);
+  box-shadow: 0 4px 18px rgba(255, 45, 85, 0.4);
+  color: #fff;
+  font:
+    700 14px/1 var(--font-sans),
+    sans-serif;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease;
+}
+.xbs-done:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(255, 45, 85, 0.6);
+}
+.xbs-esc {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  color: rgba(255, 255, 255, 0.45);
+  font:
+    500 12px/1 var(--font-sans),
+    sans-serif;
+  letter-spacing: 0.04em;
+  opacity: 0;
+  transition: opacity 300ms ease 400ms;
+}
+.xbs-open .xbs-esc {
+  opacity: 1;
+}
+.xbs-finishing .xbs-backdrop,
+.xbs-finishing .xbs-kanji {
+  opacity: 0;
+  transition: opacity 700ms ease 300ms;
+}
+.xbs-finishing .xbs-hud,
+.xbs-finishing .xbs-esc,
+.xbs-fading {
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+@media (max-width: 640px) {
+  .xbs-hud {
+    bottom: 20px;
+    gap: 10px;
+    padding-left: 14px;
+  }
+  .xbs-hint {
+    display: none;
+  }
+}
+
+/* Legal and long-form pages. */
+@layer components {
+  .prose-x {
+    font-size: 16px;
+    line-height: 1.7;
+  }
+  .prose-x > * + * {
+    margin-top: 1rem;
+  }
+  .prose-x h2 {
+    margin-top: 3rem;
+    font-size: 1.05rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .prose-x h2 + * {
+    margin-top: 0.75rem;
+  }
+  .prose-x a {
+    color: var(--brand);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .prose-x strong {
+    font-weight: 600;
+  }
+  .prose-x ul {
+    list-style: square;
+    padding-left: 1.25rem;
+  }
+  .prose-x li + li {
+    margin-top: 0.4rem;
+  }
+  .prose-x li::marker {
+    color: var(--muted-foreground);
+  }
+  .prose-x code {
+    background: var(--muted);
+    padding: 0.1rem 0.3rem;
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+  }
+  .prose-x p,
+  .prose-x li {
+    color: color-mix(in oklch, var(--foreground) 82%, transparent);
+  }
+}
