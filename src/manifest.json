@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "version": "1.6.4",
+  "name": "XBlock",
+  "description": "__MSG_extDescription__",
+  "default_locale": "en",
+  "action": {
+    "default_popup": "./popup.html",
+    "default_icon": {
+      "256": "./src/icons/get_started256.png"
+    },
+    "default_title": "__MSG_actionTitle__"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["src/media/*.png", "src/media/*.svg", "src/media/*.gif", "src/icons/*.png"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "permissions": [
+    "storage"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://x.com/*"],
+      "js": ["xdata.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["*://x.com/*"],
+      "js": ["xapi.js", "content.js", "samurai.js", "observer.js", "batch.js"],
+      "css": ["src/css/general.css", "src/css/disintegrate.css", "src/css/fontawesome.css", "src/css/samurai.css"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "icons": {
+    "256": "./src/icons/get_started256.png"
+  }
+}

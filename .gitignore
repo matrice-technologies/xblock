@@ -1,0 +1,14 @@
+node_modules
+dist/
+release/
+dist.zip
+
+# Secrets and private notes: never commit these
+.env
+.env.*
+!.env.example
+*.private.md
+todo
+
+# Maintainer-only scripts kept out of the public repo
+scripts/sync-faf-list.js

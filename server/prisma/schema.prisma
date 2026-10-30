@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  // HMAC of the auth token the extension stores in chrome.storage.sync
+  id              String            @id
+  name            String            @default("")
+  email           String            @default("")
+  enableAnimation Boolean           @default(true)
+  hidingMethod    String            @default("X_BLOCK")
+  createdAt       DateTime          @default(now())
+  lastConnection  DateTime?
+  banlists        Banlist[]
+  whitelist       WhitelistedUser[]
+  subscriptions   Subscription[]
+  blocks          UserBlock[]
+}
+
+model Banlist {
+  // The share code (shown as XBK-<id> in the popup)
+  id            String         @id
+  name          String
+  privacy       String         @default("public")
+  ownerId       String
+  owner         User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  createdAt     DateTime       @default(now())
+  bannedUsers   BannedUser[]
+  subscriptions Subscription[]
+
+  @@index([ownerId])
+}
+
+model BannedUser {
+  banlistId String
+  username  String
+  // Optional context shown when browsing a list (set by curated lists, see scripts/sync-faf-list.js)
+  name      String?
+  note      String?
+  createdAt DateTime @default(now())
+  banlist   Banlist  @relation(fields: [banlistId], references: [id], onDelete: Cascade)
+
+  @@id([banlistId, username])
+}
+
+model WhitelistedUser {
+  userId    String
+  username  String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, username])
+}
+
+model Subscription {
+  userId    String
+  banlistId String
+  mode      String   @default("blur")
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  banlist   Banlist  @relation(fields: [banlistId], references: [id], onDelete: Cascade)
+
+  @@id([userId, banlistId])
+  @@index([banlistId])
+}
+
+// Public stats about an X account, shared by every XBlock user
+model XAccount {
+  // Lowercased screen name
+  username       String   @id
+  followersCount Int?
+  updatedAt      DateTime @updatedAt
+}
+
+// Accounts an XBlock user has already blocked on X, so batch blocking can skip them
+model UserBlock {
+  userId    String
+  // Lowercased screen name
+  username  String
+  // "blocked", "muted" (the user mutes rather than blocks on X), or "unavailable" when X can't
+  // act on it (suspended, deleted, renamed)
+  status    String   @default("blocked")
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, username])
+}

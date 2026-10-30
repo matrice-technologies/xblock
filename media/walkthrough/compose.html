@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>XBlock – Walkthrough</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=block" rel="stylesheet">
+<style>
+  /* The walkthrough video: the clips recorded by capture.js (real XBlock UI), laid out chapter by
+     chapter with captions, camera moves and a drawn cursor. renderAt(t) draws any frame. */
+  :root { --bg: #05060a; --line: #2f3336; --text: #e7e9ea; --muted: #8b9298; --red: #f4212e; --orange: #ff7a1a; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #000; overflow: hidden; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: var(--text); font-family: Inter, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; transform-origin: 0 0; }
+  .glow { position: absolute; border-radius: 50%; filter: blur(120px); }
+  #glow-red { width: 900px; height: 900px; background: radial-gradient(circle, rgba(244,33,46,.45), transparent 65%); }
+  #glow-orange { width: 800px; height: 800px; background: radial-gradient(circle, rgba(255,122,26,.3), transparent 65%); }
+  #grid { position: absolute; inset: -60px; background-image: linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px); background-size: 60px 60px; -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%); }
+  #vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.6)); pointer-events: none; }
+  #fade { position: absolute; inset: 0; background: #000; opacity: 0; }
+  .accent { background: linear-gradient(90deg, var(--orange), var(--red)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  /* caption column */
+  #caption { position: absolute; left: 110px; top: 0; bottom: 0; width: 520px; display: flex; flex-direction: column; justify-content: center; }
+  #cap-num { font: 800 120px/1 Outfit, sans-serif; letter-spacing: -.04em; color: transparent; -webkit-text-stroke: 2px rgba(244,33,46,.55); margin-bottom: 18px; }
+  #cap-kicker { font: 700 20px/1 Inter, sans-serif; letter-spacing: .26em; text-transform: uppercase; color: var(--red); display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+  #cap-kicker::before { content: ""; width: 40px; height: 2px; background: var(--red); }
+  #cap-title { font: 800 64px/1.04 Outfit, sans-serif; letter-spacing: -.025em; margin: 0; }
+  #cap-body { margin-top: 26px; font-size: 26px; line-height: 1.5; color: #b3b9be; font-weight: 500; }
+  #cap-tip { margin-top: 26px; display: inline-flex; align-self: flex-start; gap: 10px; align-items: center; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,.04); color: var(--muted); font: 600 17px Inter, sans-serif; }
+  .w { display: inline-block; }
+
+  /* chapter progress */
+  #progress { position: absolute; left: 110px; bottom: 64px; display: flex; gap: 8px; }
+  #progress i { display: block; width: 26px; height: 5px; border-radius: 5px; background: #24282c; overflow: hidden; position: relative; }
+  #progress i b { position: absolute; inset: 0; width: 0; background: linear-gradient(90deg, var(--orange), var(--red)); border-radius: 5px; }
+
+  /* browser window with the x.com clip */
+  #win { position: absolute; left: 690px; top: 186px; width: 1150px; border-radius: 18px; overflow: hidden; border: 1px solid #2a2e33; background: #0b0d10; box-shadow: 0 50px 120px rgba(0,0,0,.65), 0 0 0 8px rgba(255,255,255,.02); transform-origin: 50% 50%; }
+  #win-bar { height: 44px; display: flex; align-items: center; gap: 9px; padding: 0 16px; background: #15181c; border-bottom: 1px solid #23272b; }
+  #win-bar .dot { width: 12px; height: 12px; border-radius: 50%; background: #3a3f44; }
+  #win-url { flex: 1; margin: 0 14px 0 18px; height: 28px; border-radius: 999px; background: #0b0d10; display: flex; align-items: center; padding: 0 14px; font: 500 14px Inter, sans-serif; color: #8b9298; gap: 8px; }
+  #win-ext { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; }
+  #win-ext img { width: 22px; height: 22px; border-radius: 6px; }
+  #win-ext.on { background: rgba(244,33,46,.18); box-shadow: 0 0 0 1px rgba(244,33,46,.5); }
+  #win-view { position: relative; width: 1150px; height: 647px; overflow: hidden; background: #000; }
+  .cam { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  .cam img.frame { display: block; }
+
+  /* the popup, floating under the extension icon */
+  #pop { position: absolute; left: 0; top: 0; width: 700px; height: 590px; transform-origin: 100% 0; border-radius: 14px; overflow: hidden; box-shadow: 0 40px 120px rgba(0,0,0,.75), 0 0 0 1px rgba(255,255,255,.08), 0 0 80px rgba(244,33,46,.18); opacity: 0; }
+  #pop .cam { width: 700px; height: 590px; }
+  #pop img.frame { width: 700px; height: 590px; }
+
+  .cursor { position: absolute; left: 0; top: 0; width: 26px; height: 26px; pointer-events: none; filter: drop-shadow(0 3px 6px rgba(0,0,0,.6)); }
+  .ripple { position: absolute; left: 0; top: 0; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; border: 3px solid #fff; opacity: 0; }
+
+  /* intro / outro */
+  .title-card { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; opacity: 0; }
+  .title-card img { width: 200px; height: 200px; border-radius: 46px; box-shadow: 0 0 120px rgba(244,33,46,.55); }
+  .title-card .big { font: 900 150px/1 Outfit, sans-serif; letter-spacing: -.04em; margin-top: 30px; }
+  .title-card .sub { margin-top: 18px; font: 600 40px/1.3 Inter, sans-serif; color: #c4c9cd; }
+  .title-card .pill { margin-top: 40px; padding: 18px 36px; border-radius: 999px; background: #eff3f4; color: #0f1419; font: 800 28px Outfit, sans-serif; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="glow-red" class="glow"></div>
+  <div id="glow-orange" class="glow"></div>
+  <div id="grid"></div>
+
+  <div id="win">
+    <div id="win-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      <div id="win-url"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8b9298" stroke-width="2.4"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>x.com/home</div>
+      <div id="win-ext"><img src="../../src/icons/get_started256.png"></div>
+    </div>
+    <div id="win-view"><div class="cam" id="x-cam"><img class="frame" id="x-img" width="1280" height="720"><div class="ripple" id="x-ripple"></div><svg class="cursor" id="x-cursor" viewBox="0 0 24 24"><path d="M5 2.5v17.2l4.6-4.4 2.9 6.6 3-1.3-2.9-6.5h6.4z" fill="#fff" stroke="#000" stroke-width="1.4" stroke-linejoin="round"/></svg></div></div>
+  </div>
+  <div id="pop"><div class="cam" id="p-cam"><img class="frame" id="p-img"><div class="ripple" id="p-ripple"></div><svg class="cursor" id="p-cursor" viewBox="0 0 24 24"><path d="M5 2.5v17.2l4.6-4.4 2.9 6.6 3-1.3-2.9-6.5h6.4z" fill="#fff" stroke="#000" stroke-width="1.4" stroke-linejoin="round"/></svg></div></div>
+
+  <div id="caption">
+    <div id="cap-num"></div>
+    <div id="cap-kicker"></div>
+    <h1 id="cap-title"></h1>
+    <div id="cap-body"></div>
+    <div id="cap-tip"></div>
+  </div>
+  <div id="progress"></div>
+
+  <div class="title-card" id="intro">
+    <img src="../../src/icons/get_started256.png">
+    <div class="big">XBlock</div>
+    <div class="sub">Feature walkthrough · <span class="accent" style="font-weight:800">everything it does</span></div>
+  </div>
+  <div class="title-card" id="outro">
+    <img src="../../src/icons/get_started256.png" style="width:160px;height:160px;border-radius:38px">
+    <div class="big" style="font-size:128px">XBlock</div>
+    <div class="sub">Block in one click. Share lists. <span class="accent" style="font-weight:800">Keep your feed clean.</span></div>
+    <div class="pill">Free on the Chrome Web Store</div>
+  </div>
+
+  <div id="vignette"></div>
+  <div id="fade"></div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, x) => a + (b - a) * x;
+const ease = { out: x => 1 - Math.pow(1 - x, 3), inOut: x => (x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2), back: x => { const c = 1.70158; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); } };
+
+const X_SCALE = 1150 / 1280; // x.com clip (1280×720 CSS px) in the window
+const POP = { right: 1840, top: 150, scale: 1.36 }; // the popup floats under the toolbar icon
+
+// Each chapter plays clip segments (seconds, or "mark±offset" from clip.json marks) with a
+// short hold on the first and last frame. cam: where to look in the clip ({cx, cy, zoom}).
+const CHAPTERS = [
+  { id: "intro", dur: 4.2 },
+  { kicker: "On every post", title: "Block in <span class='accent'>one click</span>", view: "x",
+    body: "XBlock adds a block button to every post. One click: the account is blocked on X, added to your list, and the post folds away.",
+    segs: [{ clip: "x-instant", from: 0.6, to: 8.1 }], cam: [{ t: 0, cx: 640, cy: 360, zoom: 1 }, { t: 1.4, cx: 700, cy: 300, zoom: 1.45 }] },
+  { kicker: "Block animation", title: "Hold it… <span class='accent'>boom.</span>", view: "x",
+    body: "Like a bit of drama? With the Explosion animation, hold the button: the post cracks, shakes and blows up.",
+    segs: [{ clip: "x-explode", from: 0.4, to: 5.6 }], cam: [{ t: 0, cx: 700, cy: 330, zoom: 1.45 }] },
+  { kicker: "Block animation", title: "<span class='accent'>Samurai</span> mode", view: "x",
+    body: "The post jumps out of your feed and you slice it to pieces with your mouse. Hit Done and it's blocked.",
+    segs: [{ clip: "x-samurai", from: 0.6, to: 10.9 }], cam: [{ t: 0, cx: 700, cy: 330, zoom: 1.35 }, { t: 1.9, cx: 640, cy: 360, zoom: 1 }] },
+  { kicker: "Settings", title: "Your style, <span class='accent'>your rules</span>", view: "popup",
+    body: "Pick the block animation, and whether the block button on a post blocks the account on X or mutes it, so they never know.",
+    segs: [{ clip: "popup-home", from: 0.8, to: 10.4 }] },
+  { kicker: "Your list", title: "Everyone you block, <span class='accent'>in one list</span>", view: "popup",
+    body: "Everything you block is saved to your XBlock list. Click your share code to copy it, and search your list anytime.",
+    segs: [{ clip: "popup-list", from: 0.4, to: 10.1 }] },
+  { kicker: "Shared lists", title: "Subscribe <span class='accent'>from a post</span>", view: "x",
+    body: "When a share code shows up in a post or a bio, XBlock turns it into a Subscribe button. One click and that list is yours too.",
+    segs: [{ clip: "x-share", from: 0.6, to: 6.1 }], cam: [{ t: 0, cx: 640, cy: 360, zoom: 1 }, { t: 1.2, cx: 690, cy: 260, zoom: 1.6 }] },
+  { kicker: "Shared lists", title: "…or paste <span class='accent'>a code</span>", view: "popup",
+    body: "Add any list from the popup with its share code, then pick its mode: block or mute its accounts on X, or just hide or blur their posts for you.",
+    segs: [{ clip: "popup-subscribe", from: "type-0.5", to: "browse-0.3" }] },
+  { kicker: "List modes", title: "Block, hide <span class='accent'>or blur</span>", view: "x",
+    body: "Blurred posts stay one click away, hidden ones fold to a thin line, and accounts you block or mute on X just disappear. Peek with the eye, or shield someone so they're never blocked.",
+    segs: [{ clip: "x-modes", from: 0.4, to: 8.8 }], cam: [{ t: 0, cx: 690, cy: 380, zoom: 1.3 }] },
+  { kicker: "Shared lists", title: "See who's <span class='accent'>on a list</span>", view: "popup",
+    body: "Open any list you follow to see every account in it and what you've already blocked, and shield the ones you want to keep.",
+    segs: [{ clip: "popup-subscribe", from: "browse-0.4", to: 16.2 }] },
+  { kicker: "Batch block", title: "Whole lists, <span class='accent'>hands-free</span>", view: "popup",
+    body: "Start a batch and XBlock blocks or mutes every account on your lists that act on X, in a small X window, most followed first. Pause anytime.",
+    tip: "⏩ Sped up for the video",
+    segs: [{ clip: "popup-batch", from: 0.3, to: "click+0.15" }, { clip: "x-batch", from: 0.2, to: 9.0, view: "x" }], cam: [{ t: 0, cx: 640, cy: 360, zoom: 1 }] },
+  { kicker: "Getting started", title: "Bring your <span class='accent'>existing blocks</span>", view: "popup",
+    body: "Already blocked people on X? Sync imports them into your XBlock list in one scroll.",
+    segs: [{ clip: "popup-sync", from: 0.3, to: 3.8 }] },
+  { id: "outro", dur: 5.5 },
+];
+const HOLD_IN = 0.55, HOLD_OUT = 0.7;
+
+let CLIPS = {}, BASE = "", timeline = [], DURATION = 0;
+
+function resolve(clip, v) {
+  if (typeof v === "number") return v;
+  const [, mark, sign, off] = v.match(/^(\w+)([+-])([\d.]+)$/);
+  return clip.marks[mark] + (sign === "+" ? 1 : -1) * Number(off);
+}
+
+// Called by render.js with every clip.json and the folder they live in
+window.setup = (clips, base) => {
+  CLIPS = clips; BASE = base;
+  let t = 0;
+  timeline = CHAPTERS.map((ch, i) => {
+    const segs = (ch.segs || []).map(s => ({ ...s, view: s.view || ch.view, from: resolve(clips[s.clip], s.from), to: resolve(clips[s.clip], s.to) }));
+    const dur = ch.dur || HOLD_IN + segs.reduce((sum, s) => sum + s.to - s.from, 0) + HOLD_OUT;
+    const entry = { ...ch, segs, start: t, dur, index: i };
+    t += dur;
+    return entry;
+  });
+  DURATION = t;
+  const content = timeline.filter(c => c.segs.length);
+  $("progress").innerHTML = content.map(() => "<i><b></b></i>").join("");
+  // split titles and bodies into words for the reveal
+  timeline.forEach(c => { if (c.title) c.titleHTML = wordWrap(c.title); });
+  return DURATION;
+};
+
+function wordWrap(html) {
+  const box = document.createElement("div");
+  box.innerHTML = html;
+  const out = [];
+  box.childNodes.forEach(node => {
+    if (node.nodeType === 3) node.textContent.split(/(\s+)/).forEach(p => out.push(/^\s+$/.test(p) ? p : p ? `<span class="w">${p}</span>` : ""));
+    else node.textContent.split(/(\s+)/).forEach(p => out.push(/^\s+$/.test(p) ? p : p ? `<span class="w ${node.className}">${p}</span>` : ""));
+  });
+  return out.join("");
+}
+
+// Where we are in a chapter: which segment, and the time inside its clip
+function locate(ch, τ) {
+  let local = τ - HOLD_IN;
+  if (local < 0) return { seg: ch.segs[0], clipT: ch.segs[0].from, segIndex: 0 };
+  for (let i = 0; i < ch.segs.length; i++) {
+    const s = ch.segs[i], len = s.to - s.from;
+    if (local <= len || i === ch.segs.length - 1) return { seg: s, clipT: s.from + Math.min(local, len), segIndex: i, segLocal: local };
+    local -= len;
+  }
+}
+
+function frameAt(clip, t) {
+  const f = clip.frames;
+  let lo = 0, hi = f.length - 1;
+  if (t <= f[0].t) return f[0];
+  while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (f[mid].t <= t) lo = mid; else hi = mid - 1; }
+  return f[lo];
+}
+
+function cursorAt(clip, t) {
+  const c = clip.cursor;
+  if (!c.length || t < c[0].t) return null;
+  let i = c.findIndex(e => e.t > t);
+  if (i === -1) i = c.length;
+  const a = c[i - 1], b = c[i];
+  const pos = b && b.t - a.t < 0.05 ? { x: lerp(a.x, b.x, (t - a.t) / (b.t - a.t)), y: lerp(a.y, b.y, (t - a.t) / (b.t - a.t)) } : { x: a.x, y: a.y };
+  let lastDown = -1;
+  for (let k = 1; k < i; k++) if (c[k].down && !c[k - 1].down) lastDown = c[k].t;
+  return { ...pos, down: a.down, sinceDown: lastDown < 0 ? 99 : t - lastDown };
+}
+
+async function setFrame(img, clipName, file) {
+  const src = `${BASE}/${clipName}/${file}`;
+  if (img.dataset.src === src) return;
+  img.dataset.src = src;
+  img.src = src;
+  await img.decode().catch(() => {});
+}
+
+function camAt(keys, τ) {
+  if (!keys) return { cx: 640, cy: 360, zoom: 1 };
+  let k = keys[0];
+  for (let i = 1; i < keys.length; i++) {
+    const a = keys[i - 1], b = keys[i];
+    if (τ >= b.t) { k = b; continue; }
+    if (τ > a.t + 0) {
+      const p = ease.inOut(prog(τ, b.t - 1.0, b.t));
+      return { cx: lerp(a.cx, b.cx, p), cy: lerp(a.cy, b.cy, p), zoom: lerp(a.zoom, b.zoom, p) };
+    }
+  }
+  return k;
+}
+
+// Places a clip camera: shows the clip region around (cx, cy) at `zoom`, fitting the viewport
+function placeCam(cam, view, clipW, clipH, base, { cx, cy, zoom }) {
+  const s = base * zoom;
+  let x = view.w / 2 - cx * s, y = view.h / 2 - cy * s;
+  x = Math.min(0, Math.max(view.w - clipW * s, x));
+  y = Math.min(0, Math.max(view.h - clipH * s, y));
+  cam.style.transform = `translate(${x}px, ${y}px) scale(${s})`;
+}
+
+function drawCursor(clip, t, cursorEl, rippleEl, visible) {
+  const c = visible ? cursorAt(clip, t) : null;
+  cursorEl.style.opacity = c ? 1 : 0;
+  rippleEl.style.opacity = 0;
+  if (!c) return;
+  cursorEl.style.transform = `translate(${c.x - 5}px, ${c.y - 3}px) scale(${c.down ? 0.85 : 1})`;
+  if (c.sinceDown < 0.5) {
+    const p = c.sinceDown / 0.5;
+    rippleEl.style.opacity = 0.85 * (1 - p);
+    rippleEl.style.transform = `translate(${c.x}px, ${c.y}px) scale(${lerp(0.3, 1.8, ease.out(p))})`;
+  }
+}
+
+async function renderAt(t) {
+  $("glow-red").style.transform = `translate(${lerp(-250, 900, (Math.sin(t * .13) + 1) / 2)}px, ${lerp(-300, 400, (Math.cos(t * .1) + 1) / 2)}px)`;
+  $("glow-orange").style.transform = `translate(${lerp(1200, 300, (Math.sin(t * .11 + 1) + 1) / 2)}px, ${lerp(450, -150, (Math.cos(t * .14 + 2) + 1) / 2)}px)`;
+  $("grid").style.transform = `translate(${(t * 10) % 60}px, ${(t * 6) % 60}px)`;
+
+  const ch = timeline.find(c => t < c.start + c.dur) || timeline[timeline.length - 1];
+  const τ = t - ch.start;
+  const inP = ease.out(prog(τ, 0, 0.5)), outP = ease.inOut(prog(τ, ch.dur - 0.4, ch.dur));
+
+  // title cards
+  for (const id of ["intro", "outro"]) {
+    const el = $(id), on = ch.id === id;
+    el.style.opacity = on ? (id === "intro" ? 1 - outP : inP) : 0;
+    if (on) {
+      const p = ease.back(prog(τ, 0.1, 0.9));
+      el.querySelector("img").style.transform = `scale(${lerp(0.5, 1, p)})`;
+      el.querySelectorAll(".big, .sub, .pill").forEach((e, i) => {
+        const q = ease.out(prog(τ, 0.35 + i * 0.25, 0.95 + i * 0.25));
+        e.style.opacity = q; e.style.transform = `translateY(${(1 - q) * 28}px)`;
+      });
+    }
+  }
+  const content = !ch.id;
+  $("caption").style.opacity = content ? 1 : 0;
+  $("progress").style.opacity = content ? 1 : 0;
+
+  // window and popup visibility
+  const winVisible = content ? 1 : 0;
+  if (!content) {
+    $("win").style.opacity = 0; $("pop").style.opacity = 0;
+    $("fade").style.opacity = prog(t, DURATION - 0.6, DURATION);
+    return;
+  }
+
+  // captions
+  const capOut = outP;
+  if ($("caption").dataset.ch !== String(ch.index)) {
+    $("caption").dataset.ch = ch.index;
+    $("cap-num").textContent = String(timeline.filter(c => c.segs.length).indexOf(ch) + 1).padStart(2, "0");
+    $("cap-kicker").textContent = ch.kicker;
+    $("cap-title").innerHTML = ch.titleHTML;
+    $("cap-body").textContent = ch.body;
+    $("cap-tip").textContent = ch.tip || "";
+    $("cap-tip").style.display = ch.tip ? "" : "none";
+  }
+  const reveal = (el, start) => { const p = ease.out(prog(τ, start, start + 0.6)); el.style.opacity = p * (1 - capOut); el.style.transform = `translateY(${(1 - p) * 24 - capOut * 12}px)`; };
+  reveal($("cap-num"), 0.05); reveal($("cap-kicker"), 0.12); reveal($("cap-body"), 0.65); reveal($("cap-tip"), 0.9);
+  $("cap-title").querySelectorAll(".w").forEach((w, i) => {
+    const p = ease.out(prog(τ, 0.25 + i * 0.07, 0.8 + i * 0.07));
+    w.style.opacity = p * (1 - capOut); w.style.transform = `translateY(${(1 - p) * 30}px)`; w.style.filter = `blur(${(1 - p) * 8}px)`;
+  });
+  const contentChapters = timeline.filter(c => c.segs.length);
+  [...$("progress").children].forEach((bar, i) => {
+    const c = contentChapters[i];
+    bar.firstChild.style.width = `${clamp((t - c.start) / c.dur) * 100}%`;
+  });
+
+  // which clip is on screen
+  const { seg, clipT, segIndex, segLocal = 0 } = locate(ch, τ);
+  const clip = CLIPS[seg.clip];
+  const frame = frameAt(clip, clipT);
+  const isPopup = seg.view === "popup";
+  const firstOfChapter = segIndex === 0;
+  // a view change inside a chapter cross-fades over 0.35 s
+  const segIn = firstOfChapter ? inP : ease.out(prog(segLocal, 0, 0.35));
+  const cursorVisible = τ > HOLD_IN * 0.6 && τ < ch.dur - 0.25;
+
+  // the window always shows x.com: the clip itself, or the first x-instant frame behind the popup
+  const win = $("win");
+  // fades in after the intro and out before the outro; stays up between chapters
+  const first = ch.index === 1, last = ch.index === timeline.length - 2;
+  win.style.opacity = winVisible * (first ? inP : 1) * (last ? 1 - outP : 1);
+  if (isPopup) {
+    await setFrame($("x-img"), "x-instant", CLIPS["x-instant"].frames[0].file);
+    placeCam($("x-cam"), { w: 1150, h: 647 }, 1280, 720, X_SCALE, { cx: 640, cy: 360, zoom: 1 });
+    $("x-cursor").style.opacity = 0; $("x-ripple").style.opacity = 0;
+    win.style.filter = `brightness(${lerp(1, 0.38, segIn)}) blur(${segIn * 2}px)`;
+    $("win-ext").classList.add("on");
+    // popup drops from the toolbar icon
+    const pop = $("pop");
+    const drop = ease.back(segIn);
+    pop.style.opacity = clamp(segIn * 1.6) * (1 - (nextIsPopup(ch) ? 0 : outP));
+    pop.style.transform = `translate(${POP.right - 700}px, ${POP.top}px) scale(${POP.scale * lerp(0.85, 1, drop)})`;
+    await setFrame($("p-img"), seg.clip, frame.file);
+    drawCursor(clip, clipT, $("p-cursor"), $("p-ripple"), cursorVisible);
+  } else {
+    win.style.filter = "none";
+    $("win-ext").classList.remove("on");
+    const popFade = segIndex > 0 ? 1 - ease.out(prog(segLocal, 0, 0.35)) : 0;
+    $("pop").style.opacity = popFade;
+    await setFrame($("x-img"), seg.clip, frame.file);
+    placeCam($("x-cam"), { w: 1150, h: 647 }, 1280, 720, X_SCALE, camAt(ch.cam, τ));
+    drawCursor(clip, clipT, $("x-cursor"), $("x-ripple"), cursorVisible);
+    const entering = firstOfChapter && !prevWasX(ch);
+    win.style.transform = entering ? `translateY(${(1 - inP) * 40}px) scale(${lerp(0.96, 1, inP)})` : "none";
+  }
+  $("fade").style.opacity = 0;
+}
+const prevWasX = ch => { const p = timeline[ch.index - 1]; return p && p.segs.length && p.segs[p.segs.length - 1].view === "x"; };
+const nextIsX = ch => { const n = timeline[ch.index + 1]; return n && n.segs.length && n.segs[0].view === "x"; };
+const nextIsPopup = ch => { const n = timeline[ch.index + 1]; return n && n.segs.length && n.segs[0].view === "popup"; };
+
+window.renderAt = renderAt;
+</script>
+</body>
+</html>

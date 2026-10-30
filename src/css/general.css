@@ -1,0 +1,564 @@
+
+
+
+
+/* Block action buttons container */
+.blocked-user-icon-indicator {
+    position: absolute;
+    top: 50%;
+    left:100%;
+    transform: translate(-50%, -50%);
+    padding: 10px;
+    border-radius: 8px;
+    display: flex; /* Changed from inline-flex to flex */
+    flex-direction: column; /* Stack items vertically */
+    align-items: center;
+    gap: 10px;
+    z-index: 1000;
+    text-align: center;
+    padding-left: 41px;
+}
+
+
+/* Block action buttons container */
+.eye-icon-indicator {
+    position: absolute;
+    top: 50%;
+    left:100%;
+    transform: translate(-50%, -50%);
+    padding: 10px;
+    border-radius: 8px;
+    display: none; /* Changed from inline-flex to flex */
+    flex-direction: column; /* Stack items vertically */
+    align-items: center;
+    gap: 10px;
+    z-index: 2000;
+    text-align: center;
+    padding-left: 41px;
+}
+
+/* Reset native button styling: in X's dark theme the default grey button
+   background swallows the grey icons */
+.block-user-icon,
+.whitelist-user-icon,
+.blocked-user-icon-indicator {
+    appearance: none;
+    background: transparent;
+    border: none;
+    margin: 0;
+    font: inherit;
+    cursor: pointer;
+}
+
+.block-user-icon,
+.whitelist-user-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.block-user-icon svg,
+.whitelist-user-icon svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.block-user-icon {
+    width: 20px;
+    height: 20px;
+    z-index: 1000;
+    color: #71767b; /* Red color for blocked user icon */
+    border-radius: 50%;
+}
+
+.block-user-icon,
+.whitelist-user-icon {
+    transition: background-color 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+.block-user-icon:hover {
+    background-color: rgba(244, 33, 46, 0.12);
+    box-shadow: 0 0 0 6px rgba(244, 33, 46, 0.12);
+    color: #f4212e;
+}
+
+.whitelist-user-icon {
+    width: 20px;
+    height: 20px;
+    z-index: 1000;
+    color: #71767b; /* Red color for blocked user icon */
+    border-radius: 50%;
+}
+
+.whitelist-user-icon:hover {
+    background-color: rgba(0, 186, 124, 0.12);
+    box-shadow: 0 0 0 6px rgba(0, 186, 124, 0.12);
+    color: #00ba7c;
+}
+
+.whitelist-user-icon.active {
+    color: #00ba7c;
+}
+
+.whitelist-user-icon.active:hover {
+    background-color: rgba(0, 186, 124, 0.12);
+    color: #00ba7c;
+}
+
+
+
+
+.blocked-tweet {
+    filter: blur(10px) brightness(50%);
+    position: relative;
+    pointer-events: none;
+    user-select: none;
+}
+
+
+/* General Styles */
+.block-toggle-btn {
+    height: 28px;
+    width: 28px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 1000;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.block-toggle-btn img {
+    width: 69%;
+    height: 69%;
+    filter: invert(62%) sepia(7%) saturate(300%) hue-rotate(170deg) brightness(90%) contrast(90%);
+}
+
+.block-toggle-btn:hover {
+    background: rgba(255, 47, 47, 0.212);
+    border-radius: 50%;
+}
+
+.block-toggle-btn:hover img {
+    filter: invert(20%) sepia(90%) saturate(500%) hue-rotate(0deg) brightness(90%) contrast(100%);
+}
+
+
+
+
+.block-toggle-btn.block-true img {
+    width: 100%;
+    height: 100%;
+    filter: invert(20%) sepia(90%) saturate(500%) hue-rotate(0deg) brightness(90%) contrast(100%);
+}
+
+/* Styles for blocked tweets */
+.blocked-tweet {
+    filter: blur(10px);
+    position: relative;
+}
+
+/* Block action buttons container */
+.block-action-buttons {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px;
+    border-radius: 8px;
+    display: flex; /* Changed from inline-flex to flex */
+    flex-direction: column; /* Stack items vertically */
+    align-items: center;
+    gap: 10px;
+    z-index: 1000;
+    text-align: center;
+    width: 100%;
+}
+
+
+
+.allow-tweet-button .hover-icon {
+    display: none;
+}
+
+.allow-tweet-button:hover .default-icon,
+.allow-tweet-button.locked .default-icon {
+display: none;
+}
+
+.allow-tweet-button:hover .hover-icon,
+.allow-tweet-button.locked .hover-icon {
+display: inline;
+}
+
+/* This class disables hover icon switching */
+.allow-tweet-button.disable-hover-icon:hover .default-icon {
+    display: inline;
+}
+
+.allow-tweet-button.disable-hover-icon:hover .hover-icon {
+    display: none;
+}
+
+/* Allow button */
+.allow-tweet-button {
+    cursor: pointer;
+    color: #ef1515a1;
+}
+
+.allow-tweet-button:hover {
+    cursor: pointer;
+    color:#00c753c4;
+    border-radius: 50%;
+    /* background: rgba(0, 199, 83, 0.2); */
+}
+
+.allow-tweet-button.disable-hover-icon:hover {
+    color:#ef1515d5;
+    border-radius: 50%;
+    /* background: rgba(0, 199, 83, 0.2); */
+}
+
+
+
+.allow-tweet-button.locked {
+    cursor: pointer;
+    color:#00c753;
+    border-radius: 50%;
+    /* background: rgba(0, 199, 83, 0.2); */
+}
+
+
+/* Unblock button */
+.unblock-button {
+    background: #00a745;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.unblock-button:hover {
+    background: #00c753;
+    
+}
+
+/* Ensuring relative positioning for the parent tweet container */
+.tweet-container {
+    position: relative;
+}
+
+
+
+
+
+
+
+/* "Subscribe to XBK-…" button that replaces share codes in posts and bios */
+.button-not-subscribed,
+.button-subscribed {
+    display: inline-flex;
+    align-items: center;
+    margin: 0 2px;
+    padding: 3px 12px;
+    border-radius: 999px;
+    font: 700 13px/1.4 "TwitterChirp", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    vertical-align: middle;
+    cursor: pointer;
+    transition: filter 0.15s, box-shadow 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.button-not-subscribed {
+    border: none;
+    background: linear-gradient(135deg, #ff2d55, #c1121f);
+    color: #fff;
+    box-shadow: 0 3px 14px rgba(255, 45, 85, 0.35);
+}
+
+.button-not-subscribed:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 4px 20px rgba(255, 45, 85, 0.55);
+}
+
+.button-subscribed {
+    border: 1px solid rgba(0, 186, 124, 0.6);
+    background: rgba(0, 186, 124, 0.1);
+    color: #00ba7c;
+}
+
+/* Hovering a subscribed code previews the unsubscribe */
+.button-subscribed:hover {
+    border-color: rgba(244, 33, 46, 0.6);
+    background: rgba(244, 33, 46, 0.1);
+    color: #f4212e;
+}
+
+
+
+  
+
+
+/* Label over a blurred post: "@user is blocked in [list]" */
+.block-message {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 5px;
+    padding: 8px 14px;
+    border: 1px solid rgba(244, 33, 46, 0.4);
+    border-radius: 999px;
+    background: rgba(15, 20, 25, 0.88);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45), 0 0 24px rgba(244, 33, 46, 0.15);
+    color: #e7e9ea;
+    font: 600 13px/1.3 "TwitterChirp", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.badge-red {
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #ff2d55, #c1121f);
+    color: #fff;
+    font-weight: 700;
+}
+
+.badge-grey {
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #e7e9ea;
+}
+
+
+
+
+
+.scrolldown-wrapper {
+	text-align: center;
+}
+  
+.scrolldown {
+	border: 2px solid #FFFFFF;
+	border-radius: 30px;
+	height: 46px;
+	margin: 0 auto 8px;
+	text-align: center;
+	width: 30px;
+}
+
+.scrolldown-p1,
+.scrolldown-p2 {
+	animation-duration: 1.5s;
+	animation-name: scrolldown;
+	animation-iteration-count: infinite;
+	fill: #FFFFFF;
+}
+  
+.scrolldown-p2 {
+	animation-delay: .75s;
+}
+
+@keyframes scrolldown {
+	0% {
+		opacity: 0;
+		transform: translate(0, -8px);
+	}
+	50% {
+		opacity: 1;
+		transform: translate(0, 0);
+	}
+	100% {
+		opacity: 0;
+		transform: translate(0, 8px);
+	}
+}
+
+.spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 5px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+
+
+
+
+
+
+
+
+/**
+ * Extracted from: SweetAlert
+ * Modified by: Istiak Tridip
+ */
+ .success-checkmark {
+    width: 80px;
+    height: 115px;
+    margin: 0 auto;
+    
+    .check-icon {
+        width: 80px;
+        height: 80px;
+        position: relative;
+        border-radius: 50%;
+        box-sizing: content-box;
+        border: 4px solid #4CAF50;
+        
+        &::before {
+            top: 3px;
+            left: -2px;
+            width: 30px;
+            transform-origin: 100% 50%;
+            border-radius: 100px 0 0 100px;
+        }
+        
+        &::after {
+            top: 0;
+            left: 30px;
+            width: 60px;
+            transform-origin: 0 50%;
+            border-radius: 0 100px 100px 0;
+            animation: rotate-circle 4.25s ease-in;
+        }
+        
+        &::before, &::after {
+            content: '';
+            height: 100px;
+            position: absolute;
+            background: #FFFFFF;
+            transform: rotate(-45deg);
+        }
+        
+        .icon-line {
+            height: 5px;
+            background-color: #4CAF50;
+            display: block;
+            border-radius: 2px;
+            position: absolute;
+            z-index: 10;
+            
+            &.line-tip {
+                top: 46px;
+                left: 14px;
+                width: 25px;
+                transform: rotate(45deg);
+                animation: icon-line-tip 0.75s;
+            }
+            
+            &.line-long {
+                top: 38px;
+                right: 8px;
+                width: 47px;
+                transform: rotate(-45deg);
+                animation: icon-line-long 0.75s;
+            }
+        }
+        
+        .icon-circle {
+            top: -4px;
+            left: -4px;
+            z-index: 10;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            position: absolute;
+            box-sizing: content-box;
+            border: 4px solid rgba(76, 175, 80, .5);
+        }
+        
+        .icon-fix {
+            top: 8px;
+            width: 5px;
+            left: 26px;
+            z-index: 1;
+            height: 85px;
+            position: absolute;
+            transform: rotate(-45deg);
+            background-color: #FFFFFF;
+        }
+    }
+}
+
+@keyframes rotate-circle {
+    0% {
+        transform: rotate(-45deg);
+    }
+    5% {
+        transform: rotate(-45deg);
+    }
+    12% {
+        transform: rotate(-405deg);
+    }
+    100% {
+        transform: rotate(-405deg);
+    }
+}
+
+@keyframes icon-line-tip {
+    0% {
+        width: 0;
+        left: 1px;
+        top: 19px;
+    }
+    54% {
+        width: 0;
+        left: 1px;
+        top: 19px;
+    }
+    70% {
+        width: 50px;
+        left: -8px;
+        top: 37px;
+    }
+    84% {
+        width: 17px;
+        left: 21px;
+        top: 48px;
+    }
+    100% {
+        width: 25px;
+        left: 14px;
+        top: 45px;
+    }
+}
+
+@keyframes icon-line-long {
+    0% {
+        width: 0;
+        right: 46px;
+        top: 54px;
+    }
+    65% {
+        width: 0;
+        right: 46px;
+        top: 54px;
+    }
+    84% {
+        width: 55px;
+        right: 0px;
+        top: 35px;
+    }
+    100% {
+        width: 47px;
+        right: 8px;
+        top: 38px;
+    }
+}

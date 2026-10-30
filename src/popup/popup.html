@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XBlock</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="./src/css/popup.css">
+</head>
+
+<body>
+  <div id="app">
+    <!-- Background: drifting glows + faint grid, like the promo -->
+    <div class="bg-fx" aria-hidden="true">
+      <div class="bg-glow bg-glow-red"></div>
+      <div class="bg-glow bg-glow-orange"></div>
+      <div class="bg-grid"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="xb-header">
+      <div class="brand">
+        <img src="./src/icons/get_started256.png" alt="">
+        <span class="brand-word">XBlock</span>
+      </div>
+      <div class="header-right">
+        <span class="share-label" data-i18n="shareCodeLabel">Your share code:</span>
+        <button id="blockListCodeInput" class="share-code tooltip-below-left" data-tooltip="Click to copy" data-i18n-tooltip="copyShareCode"></button>
+        <button id="buyMeCoffeeBtn" class="icon-btn tooltip-below-left" data-tooltip="Buy me a coffee 😊!" data-i18n-tooltip="buyMeCoffee"><i
+            class="fa-solid fa-mug-hot"></i></button>
+        <button id="openSettingsBtn" class="icon-btn d-none"><i class="fa-solid fa-gear"></i></button>
+      </div>
+    </header>
+
+    <!-- Tab Content -->
+    <main class="tab-content" id="tabContent">
+
+      <!-- Home -->
+      <div class="tab-pane active" id="tab1">
+
+        <div class="hero-card" id="syncCard">
+          <img src="./src/media/sync_icon.png" alt="">
+          <div class="hero-body">
+            <p data-i18n="syncCardText">You can scroll through your existing block list to upload all the blocked users to XBlock.</p>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-light openXBlockListPageBtn"><i class="fa-brands fa-x-twitter me-1"></i><span data-i18n="syncCardButton">Sync your blocklist</span></button>
+              <button id="closeSyncCardBtn" class="btn btn-sm btn-outline-light" data-i18n="noThanks">No thanks</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats">
+          <button class="stat" data-goto="tab_blocked_users">
+            <span class="stat-icon"><i class="fas fa-user-slash"></i></span>
+            <span class="stat-label" data-i18n="blockedUsers">Blocked Users</span>
+            <span class="stat-value" id="blockedUsersNumberLabel">-</span>
+          </button>
+          <button class="stat" data-goto="tab2">
+            <span class="stat-icon green"><i class="fas fa-user-shield"></i></span>
+            <span class="stat-label" data-i18n="whitelistedUsers">Whitelisted Users</span>
+            <span class="stat-value" id="whitelistedUsersNumberLabel">-</span>
+          </button>
+          <button class="stat" data-goto="tab3">
+            <span class="stat-icon orange"><i class="fas fa-list-check"></i></span>
+            <span class="stat-label" data-i18n="subscribedLists">Subscribed Lists</span>
+            <span class="stat-value" id="subscribedBlockListNumberLabel">-</span>
+          </button>
+        </div>
+
+        <section class="section">
+          <label for="accountNameInput" class="kicker" data-i18n="listPublicName">Block List Public Name</label>
+          <input type="text" class="form-control" id="accountNameInput" value="">
+          <div class="form-text" data-i18n="listPublicNameHelp">This is the account name other users will see when they subscribe to your block list.</div>
+        </section>
+
+        <section class="section">
+          <div class="d-flex align-items-baseline gap-2">
+            <span class="kicker" data-i18n="animationSwitch">Block animation</span>
+            <span class="form-text mt-0" id="blockAnimationLabel"></span>
+          </div>
+          <div class="animation-choices" id="blockAnimationChoices" role="radiogroup">
+            <input type="radio" class="btn-check" name="blockAnimation" id="blockAnimationOff" value="off" autocomplete="off">
+            <label class="animation-choice" for="blockAnimationOff">
+              <span class="animation-choice-icon">🚫</span>
+              <span class="animation-choice-title" data-i18n="blockAnimationOff">Off</span>
+              <span class="animation-choice-hint" data-i18n="blockAnimationOffHint">Block instantly</span>
+            </label>
+            <input type="radio" class="btn-check" name="blockAnimation" id="blockAnimationExplode" value="explode" autocomplete="off">
+            <label class="animation-choice" for="blockAnimationExplode">
+              <span class="animation-choice-icon">🔥</span>
+              <span class="animation-choice-title" data-i18n="blockAnimationExplode">Explosion</span>
+              <span class="animation-choice-hint" data-i18n="blockAnimationExplodeHint">Long press to blow it up</span>
+            </label>
+            <input type="radio" class="btn-check" name="blockAnimation" id="blockAnimationSamurai" value="samurai" autocomplete="off">
+            <label class="animation-choice" for="blockAnimationSamurai">
+              <span class="animation-choice-icon">⚔️</span>
+              <span class="animation-choice-title" data-i18n="blockAnimationSamurai">Samurai</span>
+              <span class="animation-choice-hint" data-i18n="blockAnimationSamuraiHint">Click, then slice it</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="section">
+          <span class="kicker" data-i18n="xActionLabel">On X, XBlock should</span>
+          <div class="animation-choices two" id="xActionChoices" role="radiogroup">
+            <input type="radio" class="btn-check" name="xAction" id="xActionBlock" value="block" autocomplete="off" checked>
+            <label class="animation-choice" for="xActionBlock">
+              <span class="animation-choice-icon">⛔</span>
+              <span class="animation-choice-title" data-i18n="xActionBlock">Block</span>
+              <span class="animation-choice-hint" data-i18n="xActionBlockHint">They can't follow you or see your posts</span>
+            </label>
+            <input type="radio" class="btn-check" name="xAction" id="xActionMute" value="mute" autocomplete="off">
+            <label class="animation-choice" for="xActionMute">
+              <span class="animation-choice-icon">🔇</span>
+              <span class="animation-choice-title" data-i18n="xActionMute">Mute</span>
+              <span class="animation-choice-hint" data-i18n="xActionMuteHint">Gone from your feed, and they won't know</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="section">
+          <label for="personalAuthTokenInput" class="kicker" data-i18n="authTokenLabel">Your Personal Auth Token</label>
+          <div class="input-group">
+            <input type="password" class="form-control" id="personalAuthTokenInput" value="hello world" disabled>
+            <button class="btn btn-outline-secondary" type="button" id="togglePersonalIdShowButton">
+              <i class="fa-solid fa-eye" id="eyeIcon"></i>
+            </button>
+          </div>
+          <div id="passwordHelpBlock" class="form-text" data-i18n="authTokenHelp">This ID is used to identify your account. It is not shared with other users.</div>
+          <button type="button" class="btn btn-sm btn-outline-danger openLoginModalBtn mt-2" data-i18n="logToOtherAccount">Log to a different account</button>
+        </section>
+      </div>
+
+      <!-- Blocked users -->
+      <div class="tab-pane" id="tab_blocked_users">
+        <div class="pane-head">
+          <h2><span data-i18n="blockedUsers">Blocked Users</span><span class="count-chip" id="blockedUsersCountChip"></span></h2>
+          <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-sm btn-light openXBlockListPageBtn"><i class="fa-brands fa-x-twitter me-1"></i><span data-i18n="syncShortButton">Sync blocklist</span></button>
+            <div class="search">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="blockedUsersSearchInput" class="form-control form-control-sm"
+                placeholder="Search blocked users..." data-i18n-placeholder="searchBlockedUsers">
+            </div>
+          </div>
+        </div>
+        <table id="blockedUsersTable" class="table xb-table">
+          <tbody>
+            <!-- Fill dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Whitelisted users -->
+      <div class="tab-pane" id="tab2">
+        <div class="pane-head">
+          <h2><span data-i18n="whitelistedUsers">Whitelisted Users</span><span class="count-chip green" id="whitelistedUsersCountChip"></span></h2>
+          <div class="search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="whitelistSearchInput" class="form-control form-control-sm"
+              placeholder="Search whitelisted users..." data-i18n-placeholder="searchWhitelistedUsers">
+          </div>
+        </div>
+        <table id="whitelistedUsersTable" class="table xb-table">
+          <tbody>
+            <!-- Fill dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Subscribed lists -->
+      <div class="tab-pane" id="tab3">
+        <div id="listBrowserView" class="d-none flex-column">
+          <div class="pane-head">
+            <div class="d-flex align-items-center gap-2" style="min-width: 0;">
+              <button class="icon-btn" id="listBrowserBackBtn" data-tooltip="Back" data-i18n-tooltip="backToLists"><i class="fa-solid fa-arrow-left"></i></button>
+              <div style="min-width: 0;">
+                <h2 class="text-truncate" id="listBrowserTitle"></h2>
+                <div class="pane-sub" id="listBrowserMeta"></div>
+              </div>
+            </div>
+            <div class="search">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="listBrowserSearchInput" class="form-control form-control-sm"
+                placeholder="Search accounts..." data-i18n-placeholder="searchListAccounts">
+            </div>
+          </div>
+          <table id="listBrowserTable" class="table xb-table">
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div id="subscribedListsView">
+          <div class="pane-head">
+            <h2 data-i18n="subscribedBlockLists">Subscribed Block Lists</h2>
+            <div class="subscribe-box">
+              <input type="text" class="form-control form-control-sm" id="subscribeCodeInput"
+                placeholder="XBlock Share Code" data-i18n-placeholder="shareCodePlaceholder">
+              <button class="btn btn-sm btn-light" id="addSubscribeBtn">
+                <i class="fa fa-plus" id="addSubscribeIcon"></i>
+                <span id="addSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="batch-card" id="batchBlockCard">
+            <span class="batch-icon"><i class="fa-solid fa-bolt"></i></span>
+            <div class="flex-fill" style="min-width: 0;">
+              <div class="batch-title" data-i18n="batchBlockTitle">Batch block</div>
+              <div class="small text-muted text-truncate" id="batchBlockStatus" data-i18n="batchIdle">Blocks every account on your lists in Block mode, biggest accounts first.</div>
+            </div>
+            <span class="count-chip" id="batchBlockRemaining"></span>
+            <button class="btn btn-sm btn-danger text-nowrap" id="batchBlockBtn"><i class="fa-solid fa-play me-1"></i>Start</button>
+          </div>
+
+          <table id="blocklistsTable" class="table xb-table lists-table">
+            <thead>
+              <tr>
+                <th scope="col" data-i18n="columnName">NAME</th>
+                <th scope="col" class="d-none"></th>
+                <th scope="col" data-i18n="columnMode">AUTO BLOCK</th>
+                <th scope="col" data-i18n="columnBlockedOnX">BLOCKED ON X</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Fill dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div class="tab-pane" id="tab4">
+        <div class="about">
+          <div class="about-logo">
+            <span class="ring"></span>
+            <img src="./src/icons/get_started256.png" alt="">
+          </div>
+          <div class="about-word">XBlock</div>
+          <p class="about-tag" data-i18n="extDescription">Block, hide, and control what you see on X with shared blocklists and real-time protection.</p>
+          <div class="about-chips">
+            <span class="chip"><i class="fa-solid fa-bolt"></i><span data-i18n="blockAnimationOffHint">Block instantly</span></span>
+            <span class="chip"><span>⚔️</span><span data-i18n="blockAnimationSamurai">Samurai</span></span>
+            <span class="chip"><i class="fa-solid fa-users"></i><span data-i18n="subscribedLists">Subscribed Lists</span></span>
+          </div>
+          <p class="about-meta"><span data-i18n="versionLabel">Version:</span> <span id="xblock-version">x.x.x</span> · © <span id="xblock-year">2025</span> <span data-i18n="allRightsReserved">All rights reserved.</span></p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer Tabs -->
+    <nav class="tabbar">
+      <button class="footer-tab-btn active" data-tab="tab1" data-tooltip="Home" data-i18n-tooltip="tabHome">
+        <i class="fa fa-house"></i>
+      </button>
+      <button class="footer-tab-btn" data-tab="tab_blocked_users" data-tooltip="Blocked Users" data-i18n-tooltip="blockedUsers">
+        <i class="fa-solid fa-user-slash"></i>
+      </button>
+      <button class="footer-tab-btn" data-tab="tab2" data-tooltip="Whitelisted Users" data-i18n-tooltip="whitelistedUsers">
+        <i class="fa fa-user-shield"></i>
+      </button>
+      <button class="footer-tab-btn" data-tab="tab3" data-tooltip="Subscribed Block Lists" data-i18n-tooltip="subscribedBlockLists">
+        <i class="fa fa-list-check"></i>
+      </button>
+      <button class="footer-tab-btn" data-tab="tab4" data-tooltip="Info" data-i18n-tooltip="tabInfo">
+        <i class="fa fa-circle-info"></i>
+      </button>
+    </nav>
+
+    <!-- Sign in with another token -->
+    <div id="loginModal" style="display:none;">
+      <div class="modal-card">
+        <span class="modal-icon"><i class="fa-solid fa-right-to-bracket"></i></span>
+        <div class="flex-fill">
+          <label class="kicker" for="newAuthTokenInput" data-i18n="authTokenModalLabel">Personal Auth Token</label>
+          <input type="text" class="form-control" id="newAuthTokenInput" value="">
+          <div class="form-text" data-i18n="authTokenModalHelp">Enter a valid Authentication Token to sign in.</div>
+          <div class="d-flex justify-content-end gap-2 mt-3">
+            <button class="btn btn-sm btn-outline-light closeLoginModalBtn" data-i18n="cancel">Cancel</button>
+            <button class="btn btn-sm btn-light loginBtn" data-i18n="signIn">Sign in</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
