@@ -217,14 +217,16 @@
   }
 }
 
-/* The playground's "Hold me" hint, pointing at the block button. */
+/* The playground's "Hold me" hint, pointing at the block button. It moves
+   with transform, not translate: Tailwind's -translate-y-1/2 centring the
+   hint on the button is the translate property, and must stay as it is. */
 @keyframes nudge {
   0%,
   100% {
-    translate: 0 0;
+    transform: translateX(0);
   }
   50% {
-    translate: 5px 0;
+    transform: translateX(5px);
   }
 }
 
