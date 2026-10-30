@@ -15,6 +15,8 @@ const SAMURAI_DROP_AREA = 0.05;
 const SAMURAI_MIN_CUT_AREA = 0.004;
 const SAMURAI_TRAIL_MS = 100;
 const SAMURAI_INTRO_MS = 560;
+// Once the post is cut, this long without a new cut finishes the job, as if Done was clicked
+const SAMURAI_IDLE_FINISH_MS = 5000;
 
 // "explode" (long press) or "samurai"; the on/off switch is the user's enableAnimation
 let blockAnimationStyle = 'explode';
@@ -336,6 +338,8 @@ function cutPiece(session, piece, start, end) {
     session.cuts++;
     updateSamuraiCounter(session);
     samuraiSlashFx(session, piece, chordStart, chordEnd);
+    clearTimeout(session.idleTimer);
+    session.idleTimer = setTimeout(() => finishSamurai(session), SAMURAI_IDLE_FINISH_MS);
 
     const floating = session.pieces.filter(p => !p.falling).length;
     if (floating >= SAMURAI_MAX_PIECES) setTimeout(() => finishSamurai(session), 350);
@@ -411,6 +415,7 @@ function cancelSamurai(session) {
 
 function closeSamurai(session) {
     cancelAnimationFrame(session.frame);
+    clearTimeout(session.idleTimer);
     window.removeEventListener('keydown', session.onKey, true);
     window.removeEventListener('resize', session.onResize);
     session.overlay.remove();

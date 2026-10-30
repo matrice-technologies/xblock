@@ -15,6 +15,8 @@ const DROP_AREA = 0.05
 const MIN_CUT_AREA = 0.004
 const TRAIL_MS = 100
 const INTRO_MS = 560
+// Once the post is cut, this long without a new cut finishes the job, as if Done was clicked
+const IDLE_FINISH_MS = 5000
 
 export type Point = { x: number; y: number; cut?: boolean }
 type Piece = {
@@ -62,6 +64,7 @@ type Session = {
   shakeUntil: number
   lastTime: number
   frame: number
+  idleTimer: number
   onKey: (event: KeyboardEvent) => void
   onResize: () => void
 }
@@ -272,6 +275,7 @@ export function startSamurai(post: HTMLElement, options: SamuraiOptions) {
     shakeUntil: 0,
     lastTime: performance.now(),
     frame: 0,
+    idleTimer: 0,
     onKey: () => {},
     onResize: () => {},
   })
@@ -405,6 +409,8 @@ function cutPiece(session: Session, piece: Piece, start: Point, end: Point) {
   updateCounter(session)
   session.options.onCut?.(session.cuts)
   slashFx(session, piece, chordStart, chordEnd)
+  window.clearTimeout(session.idleTimer)
+  session.idleTimer = window.setTimeout(() => finish(session), IDLE_FINISH_MS)
 
   const floating = session.pieces.filter((p) => !p.falling).length
   if (floating >= MAX_PIECES) setTimeout(() => finish(session), 350)
@@ -479,6 +485,7 @@ function cancel(session: Session) {
 
 function close(session: Session) {
   cancelAnimationFrame(session.frame)
+  window.clearTimeout(session.idleTimer)
   window.removeEventListener("keydown", session.onKey, true)
   window.removeEventListener("resize", session.onResize)
   session.overlay.remove()

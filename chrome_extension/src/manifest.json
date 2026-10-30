@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "version": "1.6.4",
+  "version": "1.6.5",
   "name": "XBlock",
   "description": "__MSG_extDescription__",
   "default_locale": "en",
