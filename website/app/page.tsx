@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 import { LINKS } from "@/lib/site"
 import { buttonVariants } from "@/components/ui/button"
 import { BatchDemo } from "@/components/demo/batch-demo"
+import { HeroSamurai } from "@/components/demo/hero-samurai"
 import { LanguageDemo } from "@/components/demo/language-demo"
 import { ModesDemo } from "@/components/demo/modes-demo"
 import { Playground } from "@/components/demo/playground"
@@ -23,20 +24,6 @@ import {
 } from "@/components/site/section"
 import { SiteFooter } from "@/components/site/site-footer"
 import { SiteHeader } from "@/components/site/site-header"
-
-/** Words that surface now and then in the hero's cloud. */
-const HERO_WORDS = [
-  "blocked",
-  "muted",
-  "@troll",
-  "spam",
-  "bots",
-  "ratio",
-  "XBK-7Q2M9",
-  "clean feed",
-  "hidden",
-  "blurred",
-]
 
 /** The band under the hero: accounts going, one after another. */
 const TICKER: [string, "block" | "mute"][] = [
@@ -132,35 +119,50 @@ export default function Page() {
       <SiteHeader />
 
       <main>
-        {/* Hero: from sm up it fills the screen under the header (4rem and its 1px border) */}
-        <section className="relative isolate flex flex-col justify-center overflow-hidden border-b sm:min-h-[calc(100svh-4rem-1px-3.25rem)]">
-          <AsciiField intro clear={{ x: 0.5, y: 0.5, rx: 0.36, ry: 0.46, maxRx: 560 }} words={HERO_WORDS} />
-          <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center px-4 pt-28 pb-24 text-center">
-            <div className="rise" style={rise(0.1)}>
-              <Eyebrow>Free Chrome extension for X</Eyebrow>
+        {/* Hero: the Samurai stage, always dark, beside the pitch. From lg up
+            it fills the screen under the header and above the ticker. */}
+        <section className="dark relative isolate overflow-hidden border-b bg-background text-foreground lg:min-h-[calc(100svh-4rem-1px-3.25rem)]">
+          <div
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_72%_50%,rgba(120,8,28,0.5)_0%,rgba(40,6,14,0.35)_35%,transparent_70%)]"
+            aria-hidden="true"
+          />
+          <div className="pointer-events-none absolute inset-0 bg-stems" aria-hidden="true" />
+          {/* Three blocks: on a phone the stage comes right after the headline;
+              from lg up it takes the right column beside both text blocks. */}
+          <div className="relative z-10 mx-auto grid max-w-[1400px] gap-y-4 px-4 pt-14 pb-10 sm:px-6 lg:min-h-[inherit] lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:grid-rows-[1fr_1fr] lg:gap-x-8 lg:gap-y-0 lg:px-10 lg:py-12">
+            <div className="flex flex-col items-start lg:col-start-1 lg:row-start-1 lg:justify-end">
+              <div className="rise" style={rise(0.1)}>
+                <Eyebrow>Free Chrome extension for X</Eyebrow>
+              </div>
+              <h1 className="mt-6 text-[clamp(2.3rem,5.4vw,4.4rem)] leading-[1.02] font-medium tracking-[-0.035em]">
+                <RiseWords text="Block trolls" start={0.25} />{" "}
+                <RiseWords text="in one click." start={0.4} className="text-block" />
+              </h1>
             </div>
-            <h1 className="mt-6 text-[clamp(2.3rem,6vw,4.6rem)] leading-[1.02] font-medium tracking-[-0.035em]">
-              <RiseWords text="Block trolls" start={0.25} />{" "}
-              <RiseWords text="in one click." start={0.4} className="text-block" />
-            </h1>
-            <p className="rise mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground" style={rise(0.75)}>
-              XBlock puts a block button on every post on X, lets you share your
-              block list with a code, and blocks everyone on the lists you
-              subscribe to. Free, open source, no account.
-            </p>
-            <div className="rise mt-10 flex flex-wrap justify-center gap-3" style={rise(0.9)}>
-              <a href={LINKS.chromeStore} className={buttonVariants({ variant: "default", size: "cta" })}>
-                <ChromeIcon className="size-4" />
-                Add to Chrome, it&apos;s free
-              </a>
-              <Link href="#try" className={buttonVariants({ variant: "frame", size: "cta" })}>
-                Try it right here
-                <ArrowRightIcon data-icon="inline-end" />
-              </Link>
+            <div className="rise self-center lg:col-start-2 lg:row-span-2 lg:row-start-1" style={rise(0.5)}>
+              <HeroSamurai />
             </div>
-            <p className="rise mt-8 font-heading text-[11px] tracking-[0.14em] text-muted-foreground uppercase" style={rise(1.05)}>
-              Works with X in any language · Chrome, Edge, Brave, Arc
-            </p>
+            <div className="flex flex-col items-start lg:col-start-1 lg:row-start-2">
+              <p className="rise max-w-xl text-lg leading-relaxed text-muted-foreground lg:mt-6" style={rise(0.75)}>
+                XBlock puts a block button on every post on X, lets you share
+                your block list with a code, and blocks everyone on the lists
+                you subscribe to. Or, if you&apos;d rather, slice them to pieces
+                first. Go on, try it.
+              </p>
+              <div className="rise mt-10 flex flex-wrap gap-3" style={rise(0.9)}>
+                <a href={LINKS.chromeStore} className={buttonVariants({ variant: "default", size: "cta" })}>
+                  <ChromeIcon className="size-4" />
+                  Add to Chrome, it&apos;s free
+                </a>
+                <Link href="#try" className={buttonVariants({ variant: "frame", size: "cta" })}>
+                  Try it right here
+                  <ArrowRightIcon data-icon="inline-end" />
+                </Link>
+              </div>
+              <p className="rise mt-8 font-heading text-[11px] tracking-[0.14em] text-muted-foreground uppercase" style={rise(1.05)}>
+                Works with X in any language · Chrome, Edge, Brave, Arc
+              </p>
+            </div>
           </div>
         </section>
 

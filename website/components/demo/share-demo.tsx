@@ -13,7 +13,7 @@ const TROLLS: Post[] = [
   { id: "t3", name: "Fast Cash Daily", handle: "fastcash_daily", text: "Make $5,000 a day from home!!! 💸", color: "#ff7a00", time: "9m" },
 ]
 
-const SUBSCRIBERS = ["#1d9bf0", "#00ba7c", "#f91880", "#ffd400", "#7856ff", "#ff7a00", "#1d9bf0", "#00ba7c", "#f91880", "#7856ff", "#ffd400", "#ff7a00"]
+const SUBSCRIBERS = ["#794bc4", "#00ba7c", "#f91880", "#ffd400", "#7856ff", "#ff7a00", "#e0245e", "#00ba7c", "#f91880", "#7856ff", "#ffd400", "#ff7a00"]
 const CODE = "XBK-7Q2M9"
 // Block, then the list takes it, then every subscriber has it
 const BEAT_MS = 1100

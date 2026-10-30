@@ -4,8 +4,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* X's own palette: paper white and "lights out" black, X blue for the brand,
-   X red for everything that blocks, and X's greens, oranges and pinks for the
+/* X's own palette: paper white and "lights out" black, X red for the brand
+   and for everything that blocks, and X's greens, oranges and pinks for the
    rest. Square corners and the mono headings come from the Matrice site. */
 :root,
 .light {
@@ -26,9 +26,10 @@
   --destructive: #f4212e;
   --border: #e1e8ed;
   --input: #cfd9de;
-  --ring: #1d9bf0;
+  --ring: #f4212e;
   --radius: 0;
-  --brand: #1a8cd8;
+  /* A touch darker on white, so red text keeps its contrast */
+  --brand: #dc1a26;
   /* Block on X, the explosion, the slash */
   --block: #f4212e;
   /* Mute on X */
@@ -63,8 +64,8 @@
   --destructive: #f4212e;
   --border: #2f3336;
   --input: #333639;
-  --ring: #1d9bf0;
-  --brand: #1d9bf0;
+  --ring: #f4212e;
+  --brand: #f4212e;
   --block: #f4212e;
   --mute: #ff7a00;
   --success: #00ba7c;

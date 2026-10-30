@@ -13,13 +13,13 @@ const MODES: { value: Mode; label: string; icon: LucideIcon; tone: string; note:
   { value: "autoblock", label: "Block on X", icon: BanIcon, tone: "text-block border-block bg-block/10", note: "Blocked on X, for good. They can't see you either." },
   { value: "automute", label: "Mute on X", icon: VolumeXIcon, tone: "text-mute border-mute bg-mute/10", note: "Muted on X. Gone from your feed, and they'll never know." },
   { value: "hide", label: "Hide", icon: EyeOffIcon, tone: "text-foreground border-foreground bg-foreground/10", note: "Folded away in your browser. Nothing changes on X." },
-  { value: "blur", label: "Blur", icon: EyeIcon, tone: "text-brand border-brand bg-brand/10", note: "Blurred in your browser, one click to read it anyway." },
+  { value: "blur", label: "Blur", icon: EyeIcon, tone: "text-purple border-purple bg-purple/10", note: "Blurred in your browser, one click to read it anyway." },
 ]
 
 const LIST = { name: "Crypto bots & spam", code: "XBK-9C07E", owner: "tom.debates", size: "3,902" }
 
 const FEED: Post[] = [
-  { id: "a", name: "Emma R.", handle: "emma_r", text: "Quick thread on my favourite tools for work.", color: "#1d9bf0", time: "4m" },
+  { id: "a", name: "Emma R.", handle: "emma_r", text: "Quick thread on my favourite tools for work.", color: "#794bc4", time: "4m" },
   { id: "b", name: "Crypto King", handle: "crypto_king99", text: "$MOON is about to 100x 🚀 DM me for the presale.", color: "#ff7a00", time: "9m", verified: true, bad: true },
   { id: "c", name: "Hugo M.", handle: "hugo_m", text: "Thanks everyone for the feedback on the project!", color: "#00ba7c", time: "20m" },
 ]

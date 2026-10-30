@@ -3,7 +3,7 @@ import { ArrowRightIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-/** The small blue badge that names a section. */
+/** The small red badge that names a section. */
 function Eyebrow({
   children,
   className,

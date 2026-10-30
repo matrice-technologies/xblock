@@ -16,7 +16,7 @@ const MIN_CUT_AREA = 0.004
 const TRAIL_MS = 100
 const INTRO_MS = 560
 
-type Point = { x: number; y: number; cut?: boolean }
+export type Point = { x: number; y: number; cut?: boolean }
 type Piece = {
   el: HTMLDivElement
   clip: HTMLDivElement
@@ -83,7 +83,7 @@ export const samuraiActive = () => current !== null
 
 // --- Polygon helpers (points are {x, y, cut}; `cut` marks the edge to the next point as a cut) ---
 
-function polygonArea(points: Point[]) {
+export function polygonArea(points: Point[]) {
   let area = 0
   points.forEach((p, i) => {
     const q = points[(i + 1) % points.length]
@@ -92,7 +92,7 @@ function polygonArea(points: Point[]) {
   return Math.abs(area) / 2
 }
 
-function polygonCentroid(points: Point[]) {
+export function polygonCentroid(points: Point[]) {
   let area = 0, x = 0, y = 0
   points.forEach((p, i) => {
     const q = points[(i + 1) % points.length]
@@ -105,7 +105,7 @@ function polygonCentroid(points: Point[]) {
   return { x: x / (3 * area), y: y / (3 * area) }
 }
 
-function pointInPolygon(points: Point[], x: number, y: number) {
+export function pointInPolygon(points: Point[], x: number, y: number) {
   let sign = 0
   for (let i = 0; i < points.length; i++) {
     const a = points[i], b = points[(i + 1) % points.length]
@@ -124,7 +124,7 @@ function segmentsIntersect(a: Point, b: Point, c: Point, d: Point) {
 }
 
 // True when a blade stroke from a to b goes clean through the polygon (in one side, out the other)
-function strokeCrossesPolygon(points: Point[], a: Point, b: Point) {
+export function strokeCrossesPolygon(points: Point[], a: Point, b: Point) {
   let hits = 0
   points.forEach((p, i) => {
     if (segmentsIntersect(a, b, p, points[(i + 1) % points.length])) hits++
@@ -133,7 +133,7 @@ function strokeCrossesPolygon(points: Point[], a: Point, b: Point) {
 }
 
 // Splits a convex polygon along the line through p with direction d
-function splitPolygon(points: Point[], p: Point, d: Point): [Point[], Point[]] {
+export function splitPolygon(points: Point[], p: Point, d: Point): [Point[], Point[]] {
   const side = (v: Point) => d.x * (v.y - p.y) - d.y * (v.x - p.x) || 1e-9
   const left: Point[] = [], right: Point[] = []
   points.forEach((a, i) => {

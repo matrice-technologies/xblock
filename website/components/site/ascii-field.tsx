@@ -193,7 +193,7 @@ function AsciiField({
     let nextWordAt = WORD_FIRST
 
     let fg = "#171717"
-    let accent = "#1d9bf0"
+    let accent = "#f4212e"
     let hot = "#f4212e"
     let fontFamily = "ui-monospace, monospace"
 
@@ -432,7 +432,7 @@ function AsciiField({
       ctx!.textBaseline = "middle"
 
       for (let layer = 0; layer < 2; layer++) {
-        // Pulses and the intro's flicker in X red; the words (below) in X blue
+        // Pulses and the intro's flicker in X red, like the words (below)
         ctx!.fillStyle = layer === 0 ? fg : hot
         for (let level = 0; level < LEVELS; level++) {
           const slot = layer * LEVELS + level

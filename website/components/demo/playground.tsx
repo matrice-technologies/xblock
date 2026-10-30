@@ -25,13 +25,13 @@ type Animation = "explode" | "samurai" | "off"
 type Action = "block" | "mute"
 
 const FEED: Post[] = [
-  { id: "emma", name: "Emma R.", handle: "emma_r", text: "Sunset over the bay tonight. Unreal.", color: "#1d9bf0", time: "12m", stats: ["4", "2", "38", "1.2K"] },
+  { id: "emma", name: "Emma R.", handle: "emma_r", text: "Sunset over the bay tonight. Unreal.", color: "#794bc4", time: "12m", stats: ["4", "2", "38", "1.2K"] },
   { id: "crypto", name: "Crypto King", handle: "crypto_king99", text: "$MOON is about to 100x 🚀 Last chance to get in. DM me for the presale.", color: "#ff7a00", time: "18m", verified: true, stats: ["212", "1K", "3K", "88K"], bad: true },
   { id: "hugo", name: "Hugo M.", handle: "hugo_m", text: "Anyone got a good book for the holidays? Looking for sci-fi.", color: "#00ba7c", time: "31m", stats: ["27", "3", "64", "2.4K"] },
   { id: "troll", name: "Night Troll", handle: "troll_of_the_night", text: "Nobody asked for your opinion. Ratio + L + delete your account.", color: "#f91880", time: "44m", stats: ["9", "", "2", "640"], bad: true },
   { id: "ines", name: "Ines B.", handle: "ines_b", text: "New project goes live tomorrow, can't wait to show you!", color: "#ffd400", time: "1h", stats: ["15", "8", "121", "5K"] },
   { id: "cash", name: "Fast Cash Daily", handle: "fastcash_daily", text: "Make $5,000 a day from home!!! 💸 Link in bio", color: "#7856ff", time: "1h", stats: ["", "430", "12", "40K"], bad: true },
-  { id: "leo", name: "Leo P.", handle: "leo_p", text: "Coffee, playlist, and off we go.", color: "#1d9bf0", time: "2h", stats: ["2", "", "19", "880"] },
+  { id: "leo", name: "Leo P.", handle: "leo_p", text: "Coffee, playlist, and off we go.", color: "#00ba7c", time: "2h", stats: ["2", "", "19", "880"] },
 ]
 
 const ANIMATIONS: { value: Animation; label: string; hint: string; icon: LucideIcon }[] = [
